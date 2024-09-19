@@ -1,2 +1,2 @@
 # subletmatcher
-A program to match subletters with people looking for a place to live in Gainesville.
+A program to match sublessors with subletters in Gainesville.
