@@ -22,7 +22,7 @@ def signup():
     name = data.get('name')
     phone = data.get('phone')
 
-    query = "" #TODO: Add database query to add
+    query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, %s, %s, %s)"
     try:
         # TODO: Execute database query
         return jsonify({"message": "Account created successfully"})
@@ -36,12 +36,16 @@ def login():
     email = data.get('email')
     password = data.get('passphrase')
 
-    query = "" #TODO: Add database query
+    query = "SELECT Passphrase FROM User WHERE EMAIL = %s"
 
     #TODO: Execute database query, use check_password_hash from werkzeug to check that stored password
-    # hash matches password, check_password_has(hashedpassword, password)
+    # hash matches password, check_password_hash(hashedpassword, password)
 
     return jsonify({"error": "Incorrect username or password"})
+
+@app.route('/addlease', methods=['POST'])
+def addLease():
+    return None
 
 
 if __name__ == '__main__':
