@@ -9,6 +9,7 @@ import Home from "./pages/index.jsx";
 import Listings from "./pages/listings.jsx";
 import Profile from "./pages/profile.jsx";
 import SignUp from "./pages/signup.jsx";
+import Upload from "./pages/upload.jsx"
 
 function App() {
     return (
@@ -18,10 +19,8 @@ function App() {
                 <Route exact path="/" element={<Home />} />
                 <Route path="/listings" element={<Listings />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route
-                    path="/signup"
-                    element={<SignUp />}
-                />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/upload" element={<Upload />} />
             </Routes>
         </Router>
     );
