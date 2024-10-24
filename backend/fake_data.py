@@ -64,7 +64,12 @@ class Property:
 
 def make_property_date(n, filename="PropertyTableSQLDump.sql"):
     with open(filename, 'w') as file:
-        file.write('DELETE FROM Property;\n')
+        file.write('DROP TABLE Property; \n\n')
+        file.write('CREATE TABLE Property (\n')
+        file.write('\tstreet VARCHAR(255),\n \tunit VARCHAR(127), \n \tzipcode VARCHAR(31), \n')
+        file.write('\towner VARCHAR(127), \n \tstartDate DATE, \n \tendDate DATE, \n')
+        file.write('\tprice VARCHAR(31), \n \tavailable BOOL, \n \tnumOfRoommates INT, \n')
+        file.write('\tPRIMARY KEY (street, unit, zipcode) \n); \n\n\n')
         for i in range(n):
             listing = Property()
             file.write(listing.sql_str())
