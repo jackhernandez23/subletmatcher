@@ -1,13 +1,22 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS #Cross origin requests, assuming React front and Flask back
-from werkzeug.security import generate_password_hash, check_password_hash
+import mysql.connector
+import configparser
 
 app = Flask(__name__)
 
 CORS(app)
 
+config_file = "../database/sm_db_config.ini"
+config = configparser.ConfigParser()
+config.read(config_file)
 
-#Todo : Put MySQL connection
+conn = mysql.connector.connect(
+    user=config['DEFAULT']['username'],
+    password=config['DEFAULT']['password'],
+  host=config['DEFAULT']['servername'],
+  database=config['DEFAULT']['dbname'])
+
 
 @app.route('/', methods=['GET'])
 def test():
@@ -18,11 +27,11 @@ def test():
 def signup():
     data = request.get_json()
     email = data.get('email')
-    passphrase = generate_password_hash(data.get('passphrase')) #Hashes password for storage
+    passphrase = data.get('passphrase') #Hashes password for storage
     name = data.get('name')
     phone = data.get('phone')
 
-    query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, %s, %s, %s)"
+    query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, PASSWORD(%s), %s, %s)"
     try:
         # TODO: Execute database query
         return jsonify({"message": "Account created successfully"})
@@ -30,13 +39,26 @@ def signup():
         return jsonify({"error": str(e)})
 
 
-@app.route('/login', methods=['POST']) #Log in route
+@app.route('/login', methods=['GET']) #Log in route
 def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('passphrase')
 
-    query = "SELECT Passphrase FROM User WHERE EMAIL = %s"
+    query = f"SELECT Passphrase FROM User WHERE EMAIL = '{email}'"
+
+    if conn and conn.is_connected():
+        cursor = conn.cursor(buffered=True)
+        result = cursor.execute(query)
+        rows = cursor.fetchall()
+
+        success = len(rows) == 1 and rows[0][0] == password
+
+        return jsonify({"success": success})
+
+    else:
+
+        print("Could not connect")
 
     #TODO: Execute database query, use check_password_hash from werkzeug to check that stored password
     # hash matches password, check_password_hash(hashedpassword, password)
