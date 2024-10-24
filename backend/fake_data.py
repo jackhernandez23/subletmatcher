@@ -72,4 +72,4 @@ def make_property_date(n, filename="PropertyTableSQLDump.sql"):
 
 
 if __name__ == '__main__':
-    make_property_date(sys.argv[1])
+    make_property_date(int(sys.argv[1]))
