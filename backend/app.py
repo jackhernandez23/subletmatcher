@@ -1,7 +1,11 @@
+from errno import EOWNERDEAD
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS #Cross origin requests, assuming React front and Flask back
 import mysql.connector
 import configparser
+
+from backend.fake_data import streets
 
 app = Flask(__name__)
 
@@ -33,10 +37,17 @@ def signup():
 
     query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, PASSWORD(%s), %s, %s)"
     try:
-        # TODO: Execute database query
-        return jsonify({"message": "Account created successfully"})
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query, (email, passphrase, name, phone))
+            conn.commit()
+            cursor.close()
+            return jsonify({"message": "Account created successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
     except Exception as e:
         return jsonify({"error": str(e)})
+    return jsonify({"error": "Account creation unsuccessful"})
 
 
 @app.route('/login', methods=['GET']) #Log in route
@@ -67,7 +78,31 @@ def login():
 
 @app.route('/addlease', methods=['POST'])
 def addLease():
-    return None
+    data = request.get_json()
+    street = data.get('street')
+    unit = data.get('unit')
+    zipcode = data.get('zipcode')
+    owner = data.get('owner')
+    price = data.get('price')
+    available = data.get('available')
+    numOfRoomates = data.get('numOfRoommates')
+    startDate = data.get('startDate')
+    endDate = data.get('endDate')
+
+    query = "INSERT INTO Property(street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            result = cursor.execute(query, (street, unit, zipcode, owner, price, available, numOfRoomates, startDate, endDate))
+            conn.commit()
+            cursor.close()
+        return jsonify({"message": "Property uploaded successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Property upload unsuccessful"})
 
 
 if __name__ == '__main__':
