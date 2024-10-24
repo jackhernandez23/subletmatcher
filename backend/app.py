@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 CORS(app)
 
-config_file = "../database/sm_db_config.ini"
+config_file = "../sm_db_config.ini"
 config_parse = configparser.ConfigParser()
 config_parse.read(config_file)
 
