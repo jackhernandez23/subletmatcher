@@ -31,7 +31,7 @@ def signup():
     name = data.get('name')
     phone = data.get('phone')
 
-    query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, PASSWORD(%s), %s, %s)"
+    query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, sha1(%s), %s, %s)"
     try:
         # TODO: Execute database query
         return jsonify({"message": "Account created successfully"})
@@ -45,14 +45,14 @@ def login():
     email = data.get('email')
     password = data.get('passphrase')
 
-    query = f"SELECT Passphrase FROM User WHERE EMAIL = '{email}'"
+    query = f"SELECT * FROM User WHERE Email = '{email}' and sha1('{password}') = Passphrase"
 
     if conn and conn.is_connected():
         cursor = conn.cursor(buffered=True)
         result = cursor.execute(query)
         rows = cursor.fetchall()
 
-        success = len(rows) == 1 and rows[0][0] == password
+        success = len(rows) == 1
 
         return jsonify({"success": success})
 
@@ -60,8 +60,6 @@ def login():
 
         print("Could not connect")
 
-    #TODO: Execute database query, use check_password_hash from werkzeug to check that stored password
-    # hash matches password, check_password_hash(hashedpassword, password)
 
     return jsonify({"error": "Incorrect username or password"})
 
