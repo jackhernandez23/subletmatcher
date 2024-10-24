@@ -17,13 +17,13 @@ config_parse.read(config_file)
 
 if config_parse.has_section('DEFAULT'):
     config = {'user':config_parse['DEFAULT']['username'],
-                'password':config_parse['DEFAULT']['password'],
+              'password':config_parse['DEFAULT']['password'],
               'host':config_parse['DEFAULT']['servername'],
               'database':config_parse['DEFAULT']['dbname']}
 
 else: # To operate mysql locally make sure you have it running.
-    config = {'user':'USERNAME', # I also suggest having username be root and no password
-              'password':'localPassword',
+    config = {'user':'USERNAME',
+              'password':'localPassword', # I suggest having no password on your local account
               'host':'localhost',
               'database':'sublet_matcher'}
 
