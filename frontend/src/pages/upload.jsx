@@ -20,42 +20,66 @@ const Upload = () => {
         })
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         console.log("attempting form submit...")
 
-        //check that all inputs are valid
+        // check that all inputs are valid
 
-        if(formData.startDate >= formData.endDate) {
-            alert("Lease cannot end before it starts")
+        // validate dates
+        if((formData.startDate >= formData.endDate) || (new Date(formData.endDate) < new Date())) {
+            alert("Please enter valid dates")
             return
         }
         
+        // validate price
         if(formData.price <= 0) {
             alert("Please enter a valid rent price");
             return
         }
 
+        // validate num roommates
         if(formData.numRoommates < 0) {
             alert("Please enter a valid number of roommates");
             return
         }
 
         console.log("input data validated, submitting form")
-    }
+
+        // make HTTP request to send data to backend
+        try {
+            const response = await fetch('https://example.com/api', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(formData)
+            });
+      
+            // handle the response
+            if (response.ok) {
+              const result = await response.json();
+              console.log('Success:', result);
+            } else {
+              console.error('Error:', response.statusText);
+            }
+          } catch (error) {
+            console.error('Network error:', error);
+          }
+    };
 
     return (
-        <div className="flex flex-col justify-center p-20 h-full space-y-20">
+        <div className="flex flex-col justify-center items-center p-20 h-full space-y-20">
             <div>
                 <h1 className="flex justify-center text-lg">
                     Upload a new listing
                 </h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-10 bg-gray-300 rounded-md w-25 h-50 items-center p-4">
-                <div>
-                    <label htmlFor="street">Street </label>
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-10 bg-gray-300 rounded-md w-1/2 h-50 items-center p-4">
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="street">Street </label>
                     <input
                     type="text"
                     id="street"
@@ -64,20 +88,9 @@ const Upload = () => {
                     onChange={handleInput}
                     />
                 </div>
-                
-                <div>
-                    <label htmlFor="zipcode">Zip Code </label>
-                    <input
-                    type="text"
-                    id="zipcode"
-                    name="zipcode"
-                    value={formData.zipcode}
-                    onChange={handleInput}
-                    />
-                </div>
 
-                <div>
-                    <label htmlFor="unit">Unit </label>
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="unit">Unit </label>
                     <input
                     type="text"
                     id="unit"
@@ -87,8 +100,19 @@ const Upload = () => {
                     />
                 </div>
 
-                <div>
-                    <label htmlFor="price">Rent Price $ </label>
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="zipcode">Zip Code </label>
+                    <input
+                    type="text"
+                    id="zipcode"
+                    name="zipcode"
+                    value={formData.zipcode}
+                    onChange={handleInput}
+                    />
+                </div>
+
+                <div  className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="price">Rent Price $ </label>
                     <input
                     type="number"
                     id="price"
@@ -98,8 +122,8 @@ const Upload = () => {
                     />
                 </div>
 
-                <div>
-                    <label htmlFor="numRoommates">Number of Roommates </label>
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="numRoommates">Number of Roommates </label>
                     <input
                     type="number"
                     id="numRoommates"
@@ -109,8 +133,8 @@ const Upload = () => {
                     />
                 </div>
 
-                <div>
-                    <label htmlFor="startDate">Lease Start Date </label>
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="startDate">Lease Start Date </label>
                     <input
                     type="date"
                     id="startDate"
@@ -120,8 +144,8 @@ const Upload = () => {
                     />
                 </div>
 
-                <div>
-                    <label htmlFor="endDate">Lease End Date </label>
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="endDate">Lease End Date </label>
                     <input
                     type="date"
                     id="endDate"
