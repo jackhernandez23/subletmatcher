@@ -12,14 +12,26 @@ app = Flask(__name__)
 CORS(app)
 
 config_file = "../database/sm_db_config.ini"
-config = configparser.ConfigParser()
-config.read(config_file)
+config_parse = configparser.ConfigParser()
+config_parse.read(config_file)
+
+if config_parse.has_section('DEFAULT'):
+    config = {'user':config_parse['DEFAULT']['username'],
+                'password':config_parse['DEFAULT']['password'],
+              'host':config_parse['DEFAULT']['servername'],
+              'database':config_parse['DEFAULT']['dbname']}
+
+else: # To operate mysql locally make sure you have it running.
+    config = {'user':'USERNAME', # I also suggest having username be root and no password
+              'password':'localPassword',
+              'host':'localhost',
+              'database':'sublet_matcher'}
 
 conn = mysql.connector.connect(
-    user=config['DEFAULT']['username'],
-    password=config['DEFAULT']['password'],
-  host=config['DEFAULT']['servername'],
-  database=config['DEFAULT']['dbname'])
+    user=config['user'],
+    password=config['password'],
+      host=config['host'],
+      database=config['database'])
 
 
 @app.route('/', methods=['GET'])
