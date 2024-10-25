@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-const Signup = () => {
+const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -58,18 +58,21 @@ const Signup = () => {
     };
 
     const onButtonClick = async () => {         // email and password verification
-        while (Signup) {
+        while (Login) {
             if (!email || !password) {              // if user didn't fill in both email and password fields
                 alert("Please fill in both email and password");
                 return;
             }
+            if (!isPasswordValid(password)) {
+                alert('Log in failed, incorrect password');
+                return;
+            }
             if (!isEmailValid(email)) {
                 alert("Please enter a valid email address");
+                return;
             }
-            if (!isPasswordValid(password))
-                alert('Sign up failed, password must contain at least 1 uppercase, 1 lowercase and 1 number');
             else if (isEmailValid(email) || isPasswordValid(password)) {
-                setSuccessMessage("Thank you for signing up!");
+                setSuccessMessage("You are logged in");
             }
         }
     };
@@ -77,7 +80,7 @@ const Signup = () => {
 return (
     <div className="flex justify-center p-40">
         <h1>
-            Signup page
+            Login page
             </h1>
             <div className="flex fixed p-20">
                 <input
@@ -95,7 +98,7 @@ return (
                     type="password"
                 />
             <button onClick={onButtonClick} className={"bg-blue-500 text-white p-2 rounded"}>
-                Sign up
+                Log in
             </button>
             </div>
         {successMessage && <div className={"text-green-500 text-2xl text-center mt-40"}>
@@ -104,4 +107,7 @@ return (
     );
 };
 
-export default Signup;
+export default Login;
+
+
+
