@@ -65,10 +65,13 @@ const Signup = () => {
             }
             if (!isEmailValid(email)) {
                 alert("Please enter a valid email address");
+                return;
             }
-            if (!isPasswordValid(password))
+            if (!isPasswordValid(password)) {
                 alert('Sign up failed, password must contain at least 1 uppercase, 1 lowercase and 1 number');
-            else if (isEmailValid(email) || isPasswordValid(password)) {
+                return;
+            }
+            if (isEmailValid(email) || isPasswordValid(password)) {
                 setSuccessMessage("Thank you for signing up!");
             }
         }

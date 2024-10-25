@@ -71,7 +71,7 @@ const Login = () => {
                 alert("Please enter a valid email address");
                 return;
             }
-            else if (isEmailValid(email) || isPasswordValid(password)) {
+            if (isEmailValid(email) || isPasswordValid(password)) {
                 setSuccessMessage("You are logged in");
             }
         }
