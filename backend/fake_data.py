@@ -62,9 +62,22 @@ class Property:
         return sql_st
 
 
-def make_property_date(n):
+def make_property_date(n, cursor):
+
+    # Check if the Property table exists
+
+    cursor.execute(""" 
+        SELECT COUNT(*)
+        FROM information_schema.tables
+        WHERE table_schema = %s 
+        AND table_name = 'Property';
+    """, (config['database'],))
+    
+    exists = cursor.fetchone()[0] > 0
+
     with open("PropertyTableSQLDump.sql", 'w') as file:
-        file.write('DROP TABLE Property;\n')
+        if exists:
+            file.write('DROP TABLE Property;\n')
         file.write('CREATE TABLE Property (street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), owner VARCHAR(127), startDate DATE, endDate DATE, price VARCHAR(31), available BOOL, numOfRoommates INT, PRIMARY KEY (street, unit, zipcode));\n')
         for i in range(n):
             listing = Property()
@@ -73,8 +86,6 @@ def make_property_date(n):
 
 
 if __name__ == '__main__':
-    make_property_date(int(sys.argv[1]))
-
     import mysql.connector
     import configparser
 
@@ -89,7 +100,7 @@ if __name__ == '__main__':
                   'database': config_parse['DEFAULT']['dbname']}
 
     else:  # To operate mysql locally make sure you have it running.
-        config = {'user': 'localusername',
+        config = {'user': 'user1',
                   'password': 'password',  # I suggest having no password on your local account
                   'host': 'localhost',
                   'database': 'sublet_matcher'}
@@ -101,6 +112,9 @@ if __name__ == '__main__':
         database=config['database'])
 
     cursor = conn.cursor(buffered=True)
+
+    make_property_date(int(sys.argv[1]), cursor)
+
     for line in open("PropertyTableSQLDump.sql"):
         result = cursor.execute(line[:-1])
     conn.commit()

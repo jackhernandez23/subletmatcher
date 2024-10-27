@@ -5,34 +5,34 @@ from flask_cors import CORS #Cross origin requests, assuming React front and Fla
 import mysql.connector
 import configparser
 
-from backend.fake_data import streets
+from fake_data import streets
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
-config_file = "../sm_db_config.ini"
-config_parse = configparser.ConfigParser()
-config_parse.read(config_file)
+def getConn():
+    config_file = "../sm_db_config.ini"
+    config_parse = configparser.ConfigParser()
+    config_parse.read(config_file)
 
-if config_parse.has_section('DEFAULT'):
-    config = {'user':config_parse['DEFAULT']['username'],
-              'password':config_parse['DEFAULT']['password'],
-              'host':config_parse['DEFAULT']['servername'],
-              'database':config_parse['DEFAULT']['dbname']}
+    if config_parse.has_section('DEFAULT'):
+        config = {'user':config_parse['DEFAULT']['username'],
+                'password':config_parse['DEFAULT']['password'],
+                'host':config_parse['DEFAULT']['servername'],
+                'database':config_parse['DEFAULT']['dbname']}
 
-else: # To operate mysql locally make sure you have it running.
-    config = {'user':'USERNAME',
-              'password':'localPassword', # I suggest having no password on your local account
-              'host':'localhost',
-              'database':'sublet_matcher'}
+    else: # To operate mysql locally make sure you have it running.
+        config = {'user':'user1',
+                'password':'password', # I suggest having no password on your local account
+                'host':'localhost',
+                'database':'sublet_matcher'}
 
-conn = mysql.connector.connect(
-    user=config['user'],
-    password=config['password'],
-      host=config['host'],
-      database=config['database'])
-
+    return mysql.connector.connect(
+        user=config['user'],
+        password=config['password'],
+        host=config['host'],
+        database=config['database'])
 
 @app.route('/', methods=['GET'])
 def test():
@@ -48,6 +48,7 @@ def signup():
     phone = data.get('phone')
 
     query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, sha1(%s), %s, %s)"
+    conn = getConn()
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
@@ -70,6 +71,7 @@ def login():
 
     query = f"SELECT * FROM User WHERE Email = '{email}' and sha1('{password}') = Passphrase"
 
+    conn = getConn()
     if conn and conn.is_connected():
         cursor = conn.cursor(buffered=True)
         result = cursor.execute(query)
@@ -101,6 +103,7 @@ def addLease():
 
     query = "INSERT INTO Property(street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
+    conn = getConn()
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
@@ -114,6 +117,67 @@ def addLease():
         return jsonify({"error": str(e)})
     return jsonify({"error": "Property upload unsuccessful"})
 
+@app.route('/listings', methods=['GET']) #Listings route
+def getlistings():
+    street = request.args.get('street')
+    unit = request.args.get('unit')
+    zipcode = request.args.get('zipcode')
+    owner = request.args.get('owner')
+    price = request.args.get('price')
+    available = request.args.get('available')
+    numOfRoommates = request.args.get('numOfRoommates')
+    startDate = request.args.get('startDate')
+    endDate = request.args.get('endDate')
+
+    query = "SELECT * FROM Property WHERE 1=1"
+    params = []
+
+    if street:
+        query += " AND street = %s"
+        params.append(street)
+    if unit:
+        query += " AND unit = %s"
+        params.append(unit)
+    if zipcode:
+        query += " AND zipcode = %s"
+        params.append(zipcode)
+    if owner:
+        query += " AND owner = %s"
+        params.append(owner)
+    if price:
+        query += " AND price = %s"
+        params.append(price)
+    if available is not None:
+        query += " AND available = %s"
+        params.append(available)
+    if numOfRoommates:
+        query += " AND numOfRoommates = %s"
+        params.append(numOfRoommates)
+    if startDate:
+        query += " AND startDate = %s"
+        params.append(startDate)
+    if endDate:
+        query += " AND endDate = %s"
+        params.append(endDate)
+
+    conn = getConn()
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query, params)
+            result = cursor.fetchall()
+            cursor.close()
+            conn.close()
+
+            if result:
+                return jsonify(result)
+            else:
+                return jsonify([])
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Listing unsuccessful"})
 
 if __name__ == '__main__':
     app.run(debug=True)

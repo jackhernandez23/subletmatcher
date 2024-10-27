@@ -5,7 +5,6 @@ import {
     Routes,
     Route,
 } from "react-router-dom";
-import $ from "jquery";
 import Home from "./pages/index.jsx";
 import Listings from "./pages/listings.jsx";
 import Profile from "./pages/profile.jsx";
