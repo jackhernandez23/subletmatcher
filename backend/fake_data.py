@@ -62,9 +62,10 @@ class Property:
         return sql_st
 
 
-def make_property_date(n, filename="PropertyTableSQLDump.sql"):
-    with open(filename, 'w') as file:
-        file.write('DELETE FROM Property;\n')
+def make_property_date(n):
+    with open("PropertyTableSQLDump.sql", 'w') as file:
+        file.write('DROP TABLE Property;\n')
+        file.write('CREATE TABLE Property (street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), owner VARCHAR(127), startDate DATE, endDate DATE, price VARCHAR(31), available BOOL, numOfRoommates INT, PRIMARY KEY (street, unit, zipcode));\n')
         for i in range(n):
             listing = Property()
             file.write(listing.sql_str())
@@ -72,4 +73,34 @@ def make_property_date(n, filename="PropertyTableSQLDump.sql"):
 
 
 if __name__ == '__main__':
-    make_property_date(sys.argv[1])
+    make_property_date(int(sys.argv[1]))
+
+    import mysql.connector
+    import configparser
+
+    config_file = "../sm_db_config.ini"
+    config_parse = configparser.ConfigParser()
+    config_parse.read(config_file)
+
+    if config_parse.has_section('DEFAULT'):
+        config = {'user': config_parse['DEFAULT']['username'],
+                  'password': config_parse['DEFAULT']['password'],
+                  'host': config_parse['DEFAULT']['servername'],
+                  'database': config_parse['DEFAULT']['dbname']}
+
+    else:  # To operate mysql locally make sure you have it running.
+        config = {'user': 'localusername',
+                  'password': 'password',  # I suggest having no password on your local account
+                  'host': 'localhost',
+                  'database': 'sublet_matcher'}
+
+    conn = mysql.connector.connect(
+        user=config['user'],
+        password=config['password'],
+        host=config['host'],
+        database=config['database'])
+
+    cursor = conn.cursor(buffered=True)
+    for line in open("PropertyTableSQLDump.sql"):
+        result = cursor.execute(line[:-1])
+    conn.commit()
