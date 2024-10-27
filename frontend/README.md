@@ -1,8 +1,15 @@
-# React + Vite
+# subletmatcher frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+How to get working:
 
-Currently, two official plugins are available:
+---INSTALL DEPENDENCIES---
+``npm install react;
+npm install vim;
+npm install tailwindcss;
+``npm install jquery;``
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---RUN PROGRAM---
+Run the following terminal command inside the frontend folder:
+``npm run dev``
+
+This will start a local frontend server
