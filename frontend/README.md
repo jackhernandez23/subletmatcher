@@ -12,7 +12,7 @@ macos: open terminal and run:
 <br><br>
 windows: follow the steps on the [Node.js](https://nodejs.org/) website
 <br><br>
-Navigate to the subletmatcher/frontend folder and run the following terminal/powershell commands:
+Once Node.js is installed, navigate to the subletmatcher/frontend folder and run the following terminal/powershell commands:
 <br>
 ``npm install; npm install tailwindcss; npm install jquery;``
 <br><br>
