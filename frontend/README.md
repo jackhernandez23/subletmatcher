@@ -7,10 +7,11 @@ How to get working:
 Install Node.js/npm:
 <br>
 macos: open terminal and run:
+<br>
 ``brew install node``
 <br><br>
 windows: follow the steps on the [Node.js](https://nodejs.org/) website
-<br> 
+<br><br>
 Navigate to the subletmatcher/frontend folder and run the following terminal/powershell commands:
 <br>
 ``npm install; npm install tailwindcss; npm install jquery;``
