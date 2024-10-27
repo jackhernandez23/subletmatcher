@@ -3,7 +3,15 @@
 How to get working:
 
 ---INSTALL DEPENDENCIES---
-Run the following terminal commands inside the frontend folder:
+<br>
+Install Node.js/npm:
+<br>
+macos: open terminal and run:
+``brew install node``
+<br><br>
+windows: follow the steps on the [Node.js](https://nodejs.org/) website
+<br> 
+Navigate to the subletmatcher/frontend folder and run the following terminal/powershell commands:
 <br>
 ``npm install; npm install tailwindcss; npm install jquery;``
 <br><br>
