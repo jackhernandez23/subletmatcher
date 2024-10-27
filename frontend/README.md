@@ -4,7 +4,7 @@ How to get working:
 
 ---INSTALL DEPENDENCIES---
 <br>
-``npm install react; npm install vim; npm install tailwindcss; npm install jquery;``
+``npm install react; npm install vite; npm install tailwindcss; npm install jquery;``
 <br><br>
 ---RUN PROGRAM---
 <br>
