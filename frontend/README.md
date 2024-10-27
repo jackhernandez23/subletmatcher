@@ -3,8 +3,9 @@
 How to get working:
 
 ---INSTALL DEPENDENCIES---
+Run the following terminal commands inside the frontend folder:
 <br>
-``npm install react; npm install vite; npm install tailwindcss; npm install jquery;``
+``npm install; npm install tailwindcss; npm install jquery;``
 <br><br>
 ---RUN PROGRAM---
 <br>
