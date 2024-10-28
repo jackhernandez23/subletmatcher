@@ -1,11 +1,32 @@
-from random import randint, randrange
 from time import time, strftime, localtime
+from random import randint, randrange
+import mysql.connector
+import configparser
 import sys
+
+
+
+config_file = "../sm_db_config.ini"
+config_parse = configparser.ConfigParser()
+config_parse.read(config_file)
+
+if config_parse.has_section('DEFAULT'):
+    config = {'user': config_parse['DEFAULT']['username'],
+              'password': config_parse['DEFAULT']['password'],
+              'host': config_parse['DEFAULT']['servername'],
+              'database': config_parse['DEFAULT']['dbname']}
+
+else:  # To operate mysql locally make sure you have it running.
+    config = {'user': 'USERNAME',
+              'password': 'PASSWORD',  # I suggest having no password on your local account
+              'host': 'localhost',
+              'database': 'sublet_matcher'}
 
 today = int(time())
 streets = ['St', 'Ave', 'Blvd', 'Boulevard', 'Avenue', 'Street', 'Ln', 'Lane']
 names = ["Bill", "Bob", "Aelly", "Jack", "Aleena", "Elliot", "Alwardi", "James", "Hernandez", "Blain", "Sally",
-         "Michelle", "John", "Georgina", "Julia", "Rocky", "Maxwell", "Anna", "May", "Richardson", "Blake"]
+         "Michelle", "John", "Georgina", "Julia", "Rocky", "Maxwell", "Anna", "May", "Richardson", "Blake", "Jane",
+         "Ashley", "Wilcox", "Mike", "Jay", "Rich", "Ishaan", "Gomez", "Hannah"]
 used_names = []
 
 
@@ -20,30 +41,36 @@ def create_dates():
     return strftime('%m/%d/%y', localtime(start_date)), strftime('%m/%d/%y', localtime(end_date))
 
 
-def fullname(used):
+def fullname():
     first_name = names[randint(0, len(names) - 1)]
     last_name = names[randint(0, len(names) - 1)]
     times = 0
 
-    while last_name == first_name or first_name + ' ' + last_name in used:
+    while last_name == first_name or first_name + ' ' + last_name in used_names:
         last_name = names[randint(0, len(names) - 1)]
 
         if times == 5:
             times = 0
             first_name = names[randint(0, len(names) - 1)]
 
-    used.append(first_name + ' ' + last_name)
+    used_names.append(first_name + ' ' + last_name)
 
     return first_name + ' ' + last_name
+['Georgina Blake', 'Alwardi Aleena', 'Anna Jack', 'Bill Richardson', 'Anna Sally', 'Maxwell John', 'Hernandez Bill', 'Anna May',
+ 'Elliot Richardson', 'Aleena Georgina', 'Bill Blake', 'Blake Rocky', 'Aelly James', 'Aleena Blain', 'Bob Julia', 'Blake Jack',
+ 'Aleena Sally', 'Blain Alwardi', 'Jack Sally', 'John Julia', 'Bob Alwardi', 'Hernandez Blain', 'Alwardi Elliot', 'Julia Alwardi',
+ 'May Aleena', 'Richardson Anna', 'May Elliot', 'James Elliot', 'John James', 'May Bob', 'Hernandez Alwardi', 'Jack Blain', 'Michelle Sally',
+ 'Sally Maxwell', 'Bob Blain', 'Richardson Michelle', 'Sally Jack', 'Elliot Michelle', 'Elliot Julia', 'Bob Blake', 'Jack Richardson',
+'Bob Anna', 'Alwardi Richardson', 'Jack Rocky', 'James Maxwell', 'May John', 'Blain Hernandez', 'Sally John', 'James Georgina']
 
 
 class Property:
-    def __init__(self):
+    def __init__(self, owner):
         self.street = f"{randint(1000, 5999)} {randint(4, 20)}th {streets[randint(0, len(streets) - 1)]}"
         self.startDate, self.endDate = create_dates()
         self.unit = randint(0, 20)
         self.zipcode = randint(32601, 32612)
-        self.owner = fullname(used_names)
+        self.owner = owner
         self.price = randint(10, 50) * 100
         self.available = randint(0, 1)
         self.numOfRoommates = randint(0, 4)
@@ -61,38 +88,51 @@ class Property:
 
         return sql_st
 
+class User:
+    def __init__(self):
+        self.name = fullname()
+        self.passphrase = self.name.replace(" ", "").lower()
+        self.email = self.passphrase + "@ufl.edu"
+        self.phone = f"325{randint(100000, 999999)}"
 
-def make_property_date(n):
-    with open("PropertyTableSQLDump.sql", 'w') as file:
-        file.write('DROP TABLE Property;\n')
+    def __str__(self):
+        string_self = f"Email: {self.email}\nPassphrase: {self.passphrase}\nName: {self.name}\nPhone: {self.phone}"
+
+        return string_self
+
+    def sql_str(self):
+        sql_st = f"INSERT INTO User (email, passphrase, name, phone) VALUES (\'{self.email}\',sha1(\'{self.passphrase}\'),\'{self.name}\',\'{self.phone}\');\n"
+
+        return sql_st
+
+def make_data(n):
+    users = []
+    lease_sql_strs = []
+    with open("SubletSQLDump.sql", 'w') as file:
+        file.write('DROP TABLE IF EXISTS Property;\n')
+        file.write('DROP TABLE IF EXISTS Leases;\n')
+        file.write('DROP TABLE IF EXISTS User;\n')
         file.write('CREATE TABLE Property (street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), owner VARCHAR(127), startDate DATE, endDate DATE, price VARCHAR(31), available BOOL, numOfRoommates INT, PRIMARY KEY (street, unit, zipcode));\n')
+        file.write('CREATE TABLE User (email VARCHAR(255) PRIMARY KEY, passphrase VARCHAR(511), phone VARCHAR(31), name VARCHAR(127));\n')
+        file.write('CREATE TABLE Leases (email VARCHAR(255), street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), PRIMARY KEY (street, unit, zipcode));\n')
         for i in range(n):
-            listing = Property()
-            file.write(listing.sql_str())
+            user = User()
+            file.write(user.sql_str())
+            users.append(user)
 
+        for j in range(n // 4 * 3):
+            rand_owner = users[randint(0, len(users) - 1)]
+            prop = Property(rand_owner.name)
+            file.write(prop.sql_str())
+            lease_sql_strs.append(f"INSERT INTO Leases (email, street, unit , zipcode) VALUES (\'{rand_owner.email}\', \'{prop.street}\', \'{prop.unit}\', \'{prop.zipcode}\');\n")
+        file.writelines(lease_sql_strs)
 
 
 if __name__ == '__main__':
-    make_property_date(int(sys.argv[1]))
-
-    import mysql.connector
-    import configparser
-
-    config_file = "../sm_db_config.ini"
-    config_parse = configparser.ConfigParser()
-    config_parse.read(config_file)
-
-    if config_parse.has_section('DEFAULT'):
-        config = {'user': config_parse['DEFAULT']['username'],
-                  'password': config_parse['DEFAULT']['password'],
-                  'host': config_parse['DEFAULT']['servername'],
-                  'database': config_parse['DEFAULT']['dbname']}
-
-    else:  # To operate mysql locally make sure you have it running.
-        config = {'user': 'localusername',
-                  'password': 'password',  # I suggest having no password on your local account
-                  'host': 'localhost',
-                  'database': 'sublet_matcher'}
+    if len(sys.argv) > 1:
+        make_data(int(sys.argv[1]))
+    else:
+        make_data(50)
 
     conn = mysql.connector.connect(
         user=config['user'],
@@ -101,6 +141,6 @@ if __name__ == '__main__':
         database=config['database'])
 
     cursor = conn.cursor(buffered=True)
-    for line in open("PropertyTableSQLDump.sql"):
-        result = cursor.execute(line[:-1])
+    for line in open("SubletSQLDump.sql"):
+        result = cursor.execute(line[:-1], multi=True)
     conn.commit()
