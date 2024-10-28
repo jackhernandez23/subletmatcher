@@ -9,12 +9,11 @@ import sys
 config_file = "../sm_db_config.ini"
 config_parse = configparser.ConfigParser()
 config_parse.read(config_file)
-
-if config_parse.has_section('DEFAULT'):
-    config = {'user': config_parse['DEFAULT']['username'],
-              'password': config_parse['DEFAULT']['password'],
-              'host': config_parse['DEFAULT']['servername'],
-              'database': config_parse['DEFAULT']['dbname']}
+if config_parse.has_section('creds'):
+    config = {'user': config_parse['creds']['username'],
+              'password': config_parse['creds']['password'],
+              'host': config_parse['creds']['servername'],
+              'database': config_parse['creds']['dbname']}
 
 else:  # To operate mysql locally make sure you have it running.
     config = {'user': 'USERNAME',
@@ -78,7 +77,7 @@ class Property:
     def __str__(self):
         string_self = (f"Street: {self.street}\nUnit: {self.unit}\nZipcode: {self.zipcode}\nOwner: {self.owner}\n"
                        f"Duration: {self.startDate}-{self.endDate}\nPrice: ${self.price}\nisAvailable: {'Yes' if self.available else 'No'}"
-                       f"{'\nRoommates: ' + str(self.numOfRoommates) if self.numOfRoommates != 0 else ''}")
+                       f"\n{'Roommates: ' + str(self.numOfRoommates) if self.numOfRoommates != 0 else ''}")
 
         return string_self
 

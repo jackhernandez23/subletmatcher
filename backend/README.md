@@ -9,7 +9,7 @@ Update the config variable in app.py and fake_data.py with you local MySQL crede
 
 (Or create a config file `sm_db_config.ini` in the root dir, should be like
 
-	[DEFAULT]
+	[creds]
 	servername=localhost
 	username=USERNAME
 	password=PASSWORD
