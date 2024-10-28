@@ -4,18 +4,16 @@ import mysql.connector
 import configparser
 import sys
 
-
-
-config_file = "../sm_db_config.ini"
-config_parse = configparser.ConfigParser()
-config_parse.read(config_file)
-if config_parse.has_section('creds'):
+try:
+    config_file = "../sm_db_config.ini"
+    config_parse = configparser.ConfigParser()
+    config_parse.read(config_file)
     config = {'user': config_parse['creds']['username'],
               'password': config_parse['creds']['password'],
               'host': config_parse['creds']['servername'],
               'database': config_parse['creds']['dbname']}
 
-else:  # To operate mysql locally make sure you have it running.
+except KeyError:  # To operate mysql locally make sure you have it running.
     config = {'user': 'USERNAME',
               'password': 'PASSWORD',  # I suggest having no password on your local account
               'host': 'localhost',
@@ -141,5 +139,5 @@ if __name__ == '__main__':
 
     cursor = conn.cursor(buffered=True)
     for line in open("SubletSQLDump.sql"):
-        result = cursor.execute(line[:-1], multi=True)
+        result = cursor.execute(line[:-1])
     conn.commit()
