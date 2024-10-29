@@ -21,8 +21,11 @@ const Navbar = () => {
                         </Link>
                     </div>
                     <div className="flex-1 flex justify-end">
-                    <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/signup">
+                    <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/login">
                             Login
+                        </Link>
+                        <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/signup">
+                            Singup
                         </Link>
                     </div>  
             </nav>

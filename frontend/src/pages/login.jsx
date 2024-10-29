@@ -8,7 +8,23 @@ const Login = () => {
     const navigate = useNavigate();
 
     const isEmailValid = (email) => {
-        /*var emailDomains = {
+        let validEmail = false;
+        const atIndex = email.indexOf('@');             // find position
+        const dotIndex = email.lastIndexOf('.');
+
+        if (atIndex < 1 && atIndex !== email.lastIndexOf('@'))      // make sure @ is not at start or end
+            validEmail= false;
+        if (dotIndex < atIndex + 2 && dotIndex === email.length - 1)        // make sure . is after @ and not directly after it
+             validEmail= false;
+        if (!email.endsWith('.com'))
+             validEmail= false;
+        else
+            validEmail = true;
+
+        return validEmail;
+
+
+                /*var emailDomains = {
             "-gmail.com": true,
             "-yahoo.com": true,
             "-hotmail.com": true,
@@ -23,8 +39,7 @@ const Login = () => {
         }
         return false;
          */
-        // need to add checks for valid emails like @gmail.com, etc.
-        let hasAtsign = false;
+        /*        let hasAtsign = false;
         let hasDotcom = false;
         for (let i = 0; i < email.length; i++) {
             const char = email[i];
@@ -36,9 +51,12 @@ const Login = () => {
                 return true;
         }
         return hasDotcom && hasAtsign;
+         */
     };
 
     const isPasswordValid = (password) => {
+        if (password.length < 8)            // password must be at least 8 characters
+            return false;
         let hasUppercase = false;
         let hasLowercase = false;
         let hasNumber = false;
@@ -58,23 +76,21 @@ const Login = () => {
     };
 
     const onButtonClick = async () => {         // email and password verification
-        while (Login) {
             if (!email || !password) {              // if user didn't fill in both email and password fields
                 alert("Please fill in both email and password");
-                return;
-            }
-            if (!isPasswordValid(password)) {
-                alert('Log in failed, incorrect password');
                 return;
             }
             if (!isEmailValid(email)) {
                 alert("Please enter a valid email address");
                 return;
             }
+            if (!isPasswordValid(password)) {
+                alert('Log in failed, incorrect password');
+                return;
+            }
             if (isEmailValid(email) || isPasswordValid(password)) {
                 setSuccessMessage("You are logged in");
             }
-        }
     };
 
 return (

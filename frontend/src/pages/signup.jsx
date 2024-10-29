@@ -8,37 +8,26 @@ const Signup = () => {
     const navigate = useNavigate();
 
     const isEmailValid = (email) => {
-        /*var emailDomains = {
-            "-gmail.com": true,
-            "-yahoo.com": true,
-            "-hotmail.com": true,
-            "-aol.com": true,
-        };
         let validEmail = false;
-        var matches = validEmail.match(/@(.*)$/);
-        if (email) {
-            if ("-" + matches[1] in emailDomains) {
-                return true;
-            }
-        }
-        return false;
-         */
-        // need to add checks for valid emails like @gmail.com, etc.
-        let hasAtsign = false;
-        let hasDotcom = false;
-        for (let i = 0; i < email.length; i++) {
-            const char = email[i];
-            if (char >= "@")
-                hasAtsign = true;
-            else if (char >= "." && char <= "m")
-                hasDotcom = true;
-            if (hasDotcom && hasAtsign)
-                return true;
-        }
-        return hasDotcom && hasAtsign;
+        const atIndex = email.indexOf('@');             // find position
+        const dotIndex = email.lastIndexOf('.');
+
+        if (atIndex < 1 && atIndex !== email.lastIndexOf('@'))      // make sure @ is not at start or end
+            validEmail= false;
+        if (dotIndex < atIndex + 2 && dotIndex === email.length - 1)        // make sure . is after @ and not directly after it
+             validEmail= false;
+        if (!email.endsWith('.com'))
+             validEmail= false;
+        else
+            validEmail = true;
+
+        return validEmail;
     };
 
     const isPasswordValid = (password) => {
+        if (password.length < 8)            // password must be at least 8 characters
+            return false;
+
         let hasUppercase = false;
         let hasLowercase = false;
         let hasNumber = false;
@@ -58,13 +47,16 @@ const Signup = () => {
     };
 
     const onButtonClick = async () => {         // email and password verification
-        while (Signup) {
             if (!email || !password) {              // if user didn't fill in both email and password fields
                 alert("Please fill in both email and password");
                 return;
             }
             if (!isEmailValid(email)) {
                 alert("Please enter a valid email address");
+                return;
+            }
+            if (password.length <  8) {
+                alert("Sign up failed, password must be at least 8 characters long");
                 return;
             }
             if (!isPasswordValid(password)) {
@@ -74,7 +66,6 @@ const Signup = () => {
             if (isEmailValid(email) || isPasswordValid(password)) {
                 setSuccessMessage("Thank you for signing up!");
             }
-        }
     };
 
 return (
