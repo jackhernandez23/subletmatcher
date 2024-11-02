@@ -70,10 +70,10 @@ const Signup = () => {
 
 return (
     <div className="flex justify-center p-40">
-        <h1>
-            Signup page
-            </h1>
-            <div className="flex fixed p-20">
+            <div className="flex justify-center items-center flex-col space-y-6 fixed p-16 bg-gray-300 rounded-md">
+                <h1>
+                    Sign up
+                </h1>
                 <input
                     value={email}
                     placeholder="Enter your email here"
