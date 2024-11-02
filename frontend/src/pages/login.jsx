@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import Cookies from 'js-cookie';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const navigate = useNavigate();
 
     const isEmailValid = (email) => {
         let validEmail = false;
@@ -90,6 +90,9 @@ const Login = () => {
             }
             if (isEmailValid(email) || isPasswordValid(password)) {
                 setSuccessMessage("You are logged in");
+                Cookies.set('email', email);
+                console.log("redirecting...")
+                window.location.href = '/';
             }
     };
 

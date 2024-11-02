@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Cookies from 'js-cookie';
 
 const Upload = () => {
     const [formData, setFormData] = useState({
@@ -10,7 +11,7 @@ const Upload = () => {
         startDate: '',
         endDate: '',
         available: '1',
-        owner: 'getUser'
+        owner: Cookies.get('email')
     })
 
     const handleInput = (e) => {
@@ -63,11 +64,14 @@ const Upload = () => {
             if (response.ok) {
               const result = await response.json();
               console.log('Success:', result);
+              window.location.href = '/profile';
             } else {
               console.error('Error:', response.statusText);
+              alert("An error occured while uploading listing")
             }
           } catch (error) {
             console.error('Network error:', error);
+            alert("An error occured while uploading listing")
           }
     };
 

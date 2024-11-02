@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import Cookies from 'js-cookie';
 
 const Signup = () => {
     const [email, setEmail] = useState('');
@@ -65,6 +66,9 @@ const Signup = () => {
             }
             if (isEmailValid(email) || isPasswordValid(password)) {
                 setSuccessMessage("Thank you for signing up!");
+                Cookies.set('email', email);
+                console.log("redirecting...")
+                window.location.href = '/profile';
             }
     };
 
