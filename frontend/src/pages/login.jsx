@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-const Signup = () => {
+const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -22,12 +22,41 @@ const Signup = () => {
             validEmail = true;
 
         return validEmail;
+
+
+                /*var emailDomains = {
+            "-gmail.com": true,
+            "-yahoo.com": true,
+            "-hotmail.com": true,
+            "-aol.com": true,
+        };
+        let validEmail = false;
+        var matches = validEmail.match(/@(.*)$/);
+        if (email) {
+            if ("-" + matches[1] in emailDomains) {
+                return true;
+            }
+        }
+        return false;
+         */
+        /*        let hasAtsign = false;
+        let hasDotcom = false;
+        for (let i = 0; i < email.length; i++) {
+            const char = email[i];
+            if (char >= "@")
+                hasAtsign = true;
+            else if (char >= "." && char <= "m")
+                hasDotcom = true;
+            if (hasDotcom && hasAtsign)
+                return true;
+        }
+        return hasDotcom && hasAtsign;
+         */
     };
 
     const isPasswordValid = (password) => {
         if (password.length < 8)            // password must be at least 8 characters
             return false;
-
         let hasUppercase = false;
         let hasLowercase = false;
         let hasNumber = false;
@@ -55,24 +84,20 @@ const Signup = () => {
                 alert("Please enter a valid email address");
                 return;
             }
-            if (password.length <  8) {
-                alert("Sign up failed, password must be at least 8 characters long");
-                return;
-            }
             if (!isPasswordValid(password)) {
-                alert('Sign up failed, password must contain at least 1 uppercase, 1 lowercase and 1 number');
+                alert('Log in failed, incorrect password');
                 return;
             }
             if (isEmailValid(email) || isPasswordValid(password)) {
-                setSuccessMessage("Thank you for signing up!");
+                setSuccessMessage("You are logged in");
             }
     };
 
 return (
     <div className="flex justify-center p-40">
             <div className="flex justify-center items-center flex-col space-y-6 fixed p-16 bg-gray-300 rounded-md">
-                <h1>
-                    Sign up
+                <h1 className="">
+                    Log in
                 </h1>
                 <input
                     value={email}
@@ -89,7 +114,7 @@ return (
                     type="password"
                 />
             <button onClick={onButtonClick} className={"bg-blue-500 text-white p-2 rounded"}>
-                Sign up
+                Log in
             </button>
             </div>
         {successMessage && <div className={"text-green-500 text-2xl text-center mt-40"}>
@@ -98,4 +123,7 @@ return (
     );
 };
 
-export default Signup;
+export default Login;
+
+
+
