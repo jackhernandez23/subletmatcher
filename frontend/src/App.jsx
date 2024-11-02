@@ -10,7 +10,7 @@ import Listings from "./pages/listings.jsx";
 import Profile from "./pages/profile.jsx";
 import SignUp from "./pages/signup.jsx";
 import LogIn from "./pages/login.jsx";
-import Upload from "./pages/upload.jsx";
+import Addlease from "./pages/addlease.jsx";
 
 function App() {
     return (
@@ -22,7 +22,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/login" element={<LogIn />} />
-                <Route path="/upload" element={<Upload />} />
+                <Route path="/addlease" element={<Addlease />} />
             </Routes>
         </Router>
     );

@@ -6,9 +6,11 @@ const Upload = () => {
         street: '',
         zipcode: '',
         unit: '',
-        numRoommates: '',
+        numOfRoommates: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        available: '1',
+        owner: 'getUser'
     })
 
     const handleInput = (e) => {
@@ -40,7 +42,7 @@ const Upload = () => {
         }
 
         // validate num roommates
-        if(formData.numRoommates < 0) {
+        if(formData.numOfRoommates < 0) {
             alert("Please enter a valid number of roommates");
             return
         }
@@ -49,7 +51,7 @@ const Upload = () => {
 
         // make HTTP request to send data to backend
         try {
-            const response = await fetch('https://example.com/api', {
+            const response = await fetch('http://127.0.0.1:5000/addlease', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -123,12 +125,12 @@ const Upload = () => {
                 </div>
 
                 <div className="justify-center w-3/4 flex flex-row">
-                    <label className="items-start w-3/4" htmlFor="numRoommates">Number of Roommates </label>
+                    <label className="items-start w-3/4" htmlFor="numOfRoommates">Number of Roommates </label>
                     <input
                     type="number"
-                    id="numRoommates"
-                    name="numRoommates"
-                    value={formData.numRoommates}
+                    id="numOfRoommates"
+                    name="numOfRoommates"
+                    value={formData.numOfRoommates}
                     onChange={handleInput}
                     />
                 </div>
