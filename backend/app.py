@@ -9,7 +9,7 @@ from fake_data import streets
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5173", "http://localhost:5173"]}})
 
 def getConn():
     config_file = "../sm_db_config.ini"
@@ -115,10 +115,10 @@ def addLease():
         return jsonify({"error": str(err)})
     except Exception as e:
         return jsonify({"error": str(e)})
-    return jsonify({"error": "Property upload unsuccessful"})
 
 @app.route('/listings', methods=['GET']) #Listings route
 def getlistings():
+
     street = request.args.get('street')
     unit = request.args.get('unit')
     zipcode = request.args.get('zipcode')
