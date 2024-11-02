@@ -25,7 +25,7 @@ const Navbar = () => {
                             Login
                         </Link>
                         <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/signup">
-                            Singup
+                            Sign up
                         </Link>
                     </div>  
             </nav>

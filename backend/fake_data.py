@@ -102,7 +102,7 @@ if __name__ == '__main__':
     else:  # To operate mysql locally make sure you have it running.
         config = {'user': 'user1',
                   'password': 'password',  # I suggest having no password on your local account
-                  'host': 'localhost',
+                  'host': '127.0.0.1',
                   'database': 'sublet_matcher'}
 
     conn = mysql.connector.connect(
