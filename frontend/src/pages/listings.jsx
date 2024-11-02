@@ -22,9 +22,15 @@ const Listings = () => {
 
     // proper date formatting
     const formatDate = (dateString) => {
+        const date = new Date(Date.UTC(
+            new Date(dateString).getFullYear(),
+            new Date(dateString).getMonth(),
+            new Date(dateString).getDate() + 2
+        ));
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return date.toLocaleDateString(undefined, options);
     };
+    
 
     return (
         <div className="flex flex-col justify-center p-10">

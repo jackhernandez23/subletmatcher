@@ -16,7 +16,7 @@ const Navbar = () => {
                         <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/profile">
                             Profile
                         </Link>
-                        <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/upload">
+                        <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/addlease">
                             Add a listing
                         </Link>
                     </div>
