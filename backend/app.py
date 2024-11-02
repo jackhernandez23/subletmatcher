@@ -88,7 +88,7 @@ def login():
 
     return jsonify({"error": "Incorrect username or password"})
 
-@app.route('/addlease', methods=['POST'])
+@app.route('/addlease', methods=['POST']) #Lease upload route
 def addLease():
     data = request.get_json()
     street = data.get('street')
