@@ -69,12 +69,12 @@ def login():
     email = data.get('email')
     password = data.get('passphrase')
 
-    query = f"SELECT * FROM User WHERE Email = '{email}' and sha1('{password}') = Passphrase"
+    query = f"SELECT * FROM User WHERE Email = %s and sha1(%s) = Passphrase"
 
     conn = getConn()
     if conn and conn.is_connected():
         cursor = conn.cursor(buffered=True)
-        result = cursor.execute(query)
+        result = cursor.execute(query, (email, password))
         rows = cursor.fetchall()
 
         success = len(rows) == 1
@@ -178,6 +178,36 @@ def getlistings():
     except Exception as e:
         return jsonify({"error": str(e)})
     return jsonify({"error": "Listing unsuccessful"})
+
+
+@app.route('/get-listing', methods=['GET']) #Listings route
+def getlisting():
+
+    street = request.args.get('street')
+    unit = request.args.get('unit')
+    zipcode = request.args.get('zipcode')
+
+    query = "SELECT * FROM Property WHERE street = %s AND unit = %s AND zipcode = %s;"
+
+    conn = getConn()
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query, street, unit, zipcode)
+            result = cursor.fetchall()
+            cursor.close()
+            conn.close()
+
+            if result:
+                return jsonify(result)
+            else:
+                return jsonify([])
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Listing unsuccessful"})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
