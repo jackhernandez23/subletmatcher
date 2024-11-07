@@ -1,7 +1,7 @@
-from errno import EOWNERDEAD
-
+from flask_cors import CORS  # Cross origin requests, assuming React front and Flask back
+from send_email import send_email, get_code
 from flask import Flask, jsonify, request
-from flask_cors import CORS #Cross origin requests, assuming React front and Flask back
+from errno import EOWNERDEAD
 import mysql.connector
 import configparser
 
@@ -11,22 +11,23 @@ app = Flask(__name__)
 
 CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5173", "http://localhost:5173"]}})
 
+
 def getConn():
     config_file = "../sm_db_config.ini"
     config_parse = configparser.ConfigParser()
     config_parse.read(config_file)
 
     if config_parse.has_section('DEFAULT'):
-        config = {'user':config_parse['DEFAULT']['username'],
-                'password':config_parse['DEFAULT']['password'],
-                'host':config_parse['DEFAULT']['servername'],
-                'database':config_parse['DEFAULT']['dbname']}
+        config = {'user': config_parse['DEFAULT']['username'],
+                  'password': config_parse['DEFAULT']['password'],
+                  'host': config_parse['DEFAULT']['servername'],
+                  'database': config_parse['DEFAULT']['dbname']}
 
-    else: # To operate mysql locally make sure you have it running.
-        config = {'user':'user1',
-                'password':'password', # I suggest having no password on your local account
-                'host':'127.0.0.1',
-                'database':'sublet_matcher'}
+    else:  # To operate mysql locally make sure you have it running.
+        config = {'user': 'user1',
+                  'password': 'password',  # I suggest having no password on your local account
+                  'host': '127.0.0.1',
+                  'database': 'sublet_matcher'}
 
     return mysql.connector.connect(
         user=config['user'],
@@ -34,16 +35,17 @@ def getConn():
         host=config['host'],
         database=config['database'])
 
+
 @app.route('/', methods=['GET'])
 def test():
     return jsonify({"message": "This is a test..."})
 
 
-@app.route('/signup', methods=['POST'])  #Sign up route
+@app.route('/signup', methods=['POST'])  # Sign up route
 def signup():
     data = request.get_json()
     email = data.get('email')
-    passphrase = data.get('passphrase') #Hashes password for storage
+    passphrase = data.get('passphrase')  # Hashes password for storage
     name = data.get('name')
     phone = data.get('phone')
 
@@ -63,7 +65,7 @@ def signup():
     return jsonify({"error": "Account creation unsuccessful"})
 
 
-@app.route('/login', methods=['GET']) #Log in route
+@app.route('/login', methods=['GET'])  # Log in route
 def login():
     data = request.get_json()
     email = data.get('email')
@@ -82,13 +84,12 @@ def login():
         return jsonify({"success": success})
 
     else:
-
         print("Could not connect")
-
 
     return jsonify({"error": "Incorrect username or password"})
 
-@app.route('/addlease', methods=['POST']) #Lease upload route
+
+@app.route('/addlease', methods=['POST'])  # Lease upload route
 def addLease():
     data = request.get_json()
     street = data.get('street')
@@ -116,7 +117,8 @@ def addLease():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-@app.route('/listings', methods=['GET']) #Listings route
+
+@app.route('/listings', methods=['GET'])  # Listings route
 def getlistings():
 
     street = request.args.get('street')
@@ -180,7 +182,7 @@ def getlistings():
     return jsonify({"error": "Listing unsuccessful"})
 
 
-@app.route('/get-listing', methods=['GET']) #Listings route
+@app.route('/get-listing', methods=['GET'])  # Get all info on a single Listing
 def getlisting():
 
     street = request.args.get('street')
@@ -209,7 +211,7 @@ def getlisting():
     return jsonify({"error": "Listing unsuccessful"})
 
 
-@app.route('/change-password', methods=['GET']) #Change password
+@app.route('/change-password', methods=['GET'])  # Change password
 def changePassword():
     userEmail = request.args.get('email')
     newPassword = request.args.get('passphrase')
@@ -228,6 +230,12 @@ def changePassword():
         return jsonify({"error": str(err)})
     except Exception as e:
         return jsonify({"error": str(e)})
+
+
+@app.route('/2fA-code', methods=['GET'])  # Get 2FA Code
+def changePassword():
+    userEmail = request.args.get('email')
+    return jsonify({"Code": get_code(userEmail)})
 
 
 if __name__ == '__main__':
