@@ -183,7 +183,7 @@ def getlistings():
 
 
 @app.route('/get-listing', methods=['GET'])  # Get all info on a single Listing
-def getlisting():
+def getListing():
 
     street = request.args.get('street')
     unit = request.args.get('unit')
@@ -241,7 +241,7 @@ def getCode():
 @app.route('/verify-email', methods=['GET'])  # Send 2Fa email
 def sendEmail():
     userEmail = request.args.get('email')
-    return jsonify({"Code": send_email(userEmail)})
+    return jsonify({"sucess": send_email(userEmail)})
 
 
 if __name__ == '__main__':
