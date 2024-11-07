@@ -294,6 +294,41 @@ def listBookmarks():
         return jsonify({"error": str(e)})
     return jsonify({"error": "Listing unsuccessful"})
 
+app.route('/get-user-listings', methods=['GET'])
+def getuserlistings():
+    data = request.json
+    userEmail = data.get('email')
+
+    query = "SELECT * FROM Property where owner = %s;"
+
+    conn = getConn()
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query, (userEmail,))
+            results = cursor.fetchall()
+            cursor.close()
+
+            listings = []
+            for(street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate) in results:
+                listings.append({
+                    "street": street,
+                    "unit": unit,
+                    "zipcode": zipcode,
+                    "owner": owner,
+                    "price": price,
+                    "available": available,
+                    "numOfRoommates": numOfRoommates,
+                    "startDate": startDate,
+                    "endDate": endDate
+                })
+
+            return jsonify({"User listings" : listings})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
