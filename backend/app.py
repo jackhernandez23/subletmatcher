@@ -241,7 +241,7 @@ def getCode():
 @app.route('/verify-email', methods=['GET'])  # Send 2Fa email
 def sendEmail():
     userEmail = request.args.get('email')
-    return jsonify({"sucess": send_email(userEmail)})
+    return jsonify({"success": send_email(userEmail)})
 
 
 if __name__ == '__main__':
