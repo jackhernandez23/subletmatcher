@@ -235,13 +235,61 @@ def changePassword():
 @app.route('/2fA-code', methods=['GET'])  # Get 2FA Code
 def getCode():
     userEmail = request.args.get('email')
-    return jsonify({"Code": get_code(userEmail)})
+    return jsonify({"code": get_code(userEmail)})
 
 
 @app.route('/verify-email', methods=['GET'])  # Send 2Fa email
 def sendEmail():
     userEmail = request.args.get('email')
     return jsonify({"success": send_email(userEmail)})
+
+
+@app.route('/bookmark', methods=['POST'])  # Bookmark Listing
+def bookmark():
+    data = request.get_json()
+    email = data.get('email')
+    zipcode = data.get('zipcode')  # Hashes password for storage
+    street = data.get('street')
+    unit = data.get('unit')
+
+    query = "INSERT INTO Bookmarks(Email, Street, Zipcode, Unit) VALUES (%s, %s, %s, %s)"
+    conn = getConn()
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query, (email, zipcode, street, unit))
+            conn.commit()
+            cursor.close()
+            return jsonify({"message": "Bookmarked successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Bookmarked unsuccessful"})
+
+@app.route('/list-bookmarks', methods=['GET'])  # Get a users bookmarks
+def listBookmarks():
+    userEmail = request.args.get('email')
+    query = "SELECT Street, Unit, Zipcode FROM Bookmarks WHERE email = %s;"
+    conn = getConn()
+
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query, userEmail)
+            result = cursor.fetchall()
+            cursor.close()
+            conn.close()
+
+            if result:
+                return jsonify(result)
+            else:
+                return jsonify([])
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Listing unsuccessful"})
 
 
 if __name__ == '__main__':
