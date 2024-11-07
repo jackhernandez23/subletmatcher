@@ -107,11 +107,11 @@ def make_data(n):
     lease_sql_strs = []
     with open("SubletSQLDump.sql", 'w') as file:
         file.write('DROP TABLE IF EXISTS Property;\n')
-        file.write('DROP TABLE IF EXISTS Leases;\n')
+        file.write('DROP TABLE IF EXISTS Bookmarks;\n')
         file.write('DROP TABLE IF EXISTS User;\n')
         file.write('CREATE TABLE Property (street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), owner VARCHAR(127), startDate DATE, endDate DATE, price VARCHAR(31), available BOOL, numOfRoommates INT, PRIMARY KEY (street, unit, zipcode));\n')
         file.write('CREATE TABLE User (email VARCHAR(255) PRIMARY KEY, passphrase VARCHAR(511), phone VARCHAR(31), name VARCHAR(127));\n')
-        file.write('CREATE TABLE Leases (email VARCHAR(255), street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), PRIMARY KEY (street, unit, zipcode));\n')
+        file.write('CREATE TABLE Bookmarks (email VARCHAR(255), street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), PRIMARY KEY (email, street, unit, zipcode));\n')
         for i in range(n):
             user = User()
             file.write(user.sql_str())
@@ -121,7 +121,9 @@ def make_data(n):
             rand_owner = users[randint(0, len(users) - 1)]
             prop = Property(rand_owner.name)
             file.write(prop.sql_str())
-            lease_sql_strs.append(f"INSERT INTO Leases (email, street, unit , zipcode) VALUES (\'{rand_owner.email}\', \'{prop.street}\', \'{prop.unit}\', \'{prop.zipcode}\');\n")
+
+            if randint(1, 3) == 2:
+                lease_sql_strs.append(f"INSERT INTO Bookmarks (email, street, unit , zipcode) VALUES (\'{rand_owner.email}\', \'{prop.street}\', \'{prop.unit}\', \'{prop.zipcode}\');\n")
         file.writelines(lease_sql_strs)
 
 
