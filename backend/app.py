@@ -209,5 +209,26 @@ def getlisting():
     return jsonify({"error": "Listing unsuccessful"})
 
 
+@app.route('/change-password', methods=['GET']) #Change password
+def changePassword():
+    userEmail = request.args.get('email')
+    newPassword = request.args.get('passphrase')
+
+    query = "UPDATE User SET passphrase = sha1(%s) WHERE email = %s;"
+
+    conn = getConn()
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query, (newPassword, userEmail))
+            conn.commit()
+            cursor.close()
+        return jsonify({"message": "Password changed successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
