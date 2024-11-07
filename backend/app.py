@@ -233,9 +233,15 @@ def changePassword():
 
 
 @app.route('/2fA-code', methods=['GET'])  # Get 2FA Code
-def changePassword():
+def getCode():
     userEmail = request.args.get('email')
     return jsonify({"Code": get_code(userEmail)})
+
+
+@app.route('/verify-email', methods=['GET'])  # Send 2Fa email
+def sendEmail():
+    userEmail = request.args.get('email')
+    return jsonify({"Code": send_email(userEmail)})
 
 
 if __name__ == '__main__':
