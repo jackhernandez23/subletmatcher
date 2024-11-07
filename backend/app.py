@@ -1,7 +1,7 @@
-from flask_cors import CORS  # Cross origin requests, assuming React front and Flask back
-from send_email import send_email, get_code
-from flask import Flask, jsonify, request
 from errno import EOWNERDEAD
+
+from flask import Flask, jsonify, request
+from flask_cors import CORS #Cross origin requests, assuming React front and Flask back
 import mysql.connector
 import configparser
 
@@ -23,18 +23,19 @@ def getConn():
                   'host': config_parse['DEFAULT']['servername'],
                   'database': config_parse['DEFAULT']['dbname']}
 
-    else:  # To operate mysql locally make sure you have it running.
-        config = {'user': 'user1',
-                  'password': 'password',  # I suggest having no password on your local account
-                  'host': '127.0.0.1',
-                  'database': 'sublet_matcher'}
+    else: # To operate mysql locally make sure you have it running.
+        config = {'user':'root',
+                'password':'password123', # I suggest having no password on your local account
+                'host':'localhost',
+                'database':'sublet_matcher',
+                  'auth_plugin':'mysql_native_password'}
 
     return mysql.connector.connect(
         user=config['user'],
         password=config['password'],
         host=config['host'],
-        database=config['database'])
-
+        database=config['database'],
+    auth_plugin=config['auth_plugin'])
 
 @app.route('/', methods=['GET'])
 def test():
@@ -84,7 +85,9 @@ def login():
         return jsonify({"success": success})
 
     else:
+
         print("Could not connect")
+
 
     return jsonify({"error": "Incorrect username or password"})
 
@@ -120,7 +123,6 @@ def addLease():
 
 @app.route('/listings', methods=['GET'])  # Listings route
 def getlistings():
-
     street = request.args.get('street')
     unit = request.args.get('unit')
     zipcode = request.args.get('zipcode')
@@ -211,10 +213,11 @@ def getListing():
     return jsonify({"error": "Listing unsuccessful"})
 
 
-@app.route('/change-password', methods=['GET'])  # Change password
+@app.route('/change-password', methods=['POST'])  # Change password
 def changePassword():
-    userEmail = request.args.get('email')
-    newPassword = request.args.get('passphrase')
+    data = request.json
+    userEmail = data.get('email')
+    newPassword = data.get('passphrase')
 
     query = "UPDATE User SET passphrase = sha1(%s) WHERE email = %s;"
 
