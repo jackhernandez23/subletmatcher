@@ -31,7 +31,7 @@ const Signup = () => {
         let hasLowercase = false;
         let hasNumber = false;
 
-        for (char of password) {     // loop to make sure password is secure enough
+        for (const char of password) {     // loop to make sure password is secure enough
             if (char >= "A" && char <= "Z")
                 hasUppercase = true;
             else if (char >= "a" && char <= "z")
