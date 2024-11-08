@@ -44,7 +44,7 @@ const Listings = () => {
                     <div key={index} className="border p-4 rounded shadow">
                         <h2 className="text-l font-bold">{listing.street} Unit {listing.unit}</h2>
                         <p>Zipcode: {listing.zipcode}</p>
-                        <p>Owner: {listing.owner}</p>
+                        <p>Contact: {listing.owner}</p>
                         <p>Price: ${listing.price}</p>
                         <p>Number of Roommates: {listing.numOfRoommates}</p>
                         <p>Start Date: {formatDate(listing.startDate)}</p>
