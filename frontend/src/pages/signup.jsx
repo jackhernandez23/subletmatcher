@@ -1,12 +1,10 @@
 import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
 import Cookies from 'js-cookie';
 
 const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const navigate = useNavigate();
 
     const isEmailValid = (email) => {
         let validEmail = false;

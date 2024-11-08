@@ -16,7 +16,7 @@ const Login = () => {
             //connect to backend to check for successful login
             try {
                 const sendData = { email: email, password: password };
-                const response = await $.ajax({
+                await $.ajax({
                     url: 'http://127.0.0.1:5000/login',
                     type: 'GET',
                     data: sendData,
