@@ -14,8 +14,8 @@ try:
               'database': config_parse['creds']['dbname']}
 
 except KeyError:  # To operate mysql locally make sure you have it running.
-    config = {'user': 'USERNAME',
-              'password': 'PASSWORD',  # I suggest having no password on your local account
+    config = {'user': 'user1',
+              'password': 'password',  # I suggest having no password on your local account
               'host': 'localhost',
               'database': 'sublet_matcher'}
 

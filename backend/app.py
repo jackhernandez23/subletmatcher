@@ -9,7 +9,8 @@ from fake_data import streets
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5173", "http://localhost:5173"]}})
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 def getConn():
@@ -68,9 +69,9 @@ def signup():
 
 @app.route('/login', methods=['GET'])  # Log in route
 def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('passphrase')
+    #data = request.get_json()
+    email = request.args.get('email')
+    password = request.args.get('password')
 
     query = f"SELECT * FROM User WHERE Email = %s and sha1(%s) = Passphrase"
 

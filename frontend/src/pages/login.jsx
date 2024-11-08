@@ -1,98 +1,41 @@
-import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {React, useState} from "react";
 import Cookies from 'js-cookie';
+import $ from 'jQuery';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    const isEmailValid = (email) => {
-        let validEmail = false;
-        const atIndex = email.indexOf('@');             // find position
-        const dotIndex = email.lastIndexOf('.');
-
-        if (atIndex < 1 && atIndex !== email.lastIndexOf('@'))      // make sure @ is not at start or end
-            validEmail= false;
-        if (dotIndex < atIndex + 2 && dotIndex === email.length - 1)        // make sure . is after @ and not directly after it
-             validEmail= false;
-        if (!email.endsWith('.com'))
-             validEmail= false;
-        else
-            validEmail = true;
-
-        return validEmail;
-
-
-                /*var emailDomains = {
-            "-gmail.com": true,
-            "-yahoo.com": true,
-            "-hotmail.com": true,
-            "-aol.com": true,
-        };
-        let validEmail = false;
-        var matches = validEmail.match(/@(.*)$/);
-        if (email) {
-            if ("-" + matches[1] in emailDomains) {
-                return true;
-            }
-        }
-        return false;
-         */
-        /*        let hasAtsign = false;
-        let hasDotcom = false;
-        for (let i = 0; i < email.length; i++) {
-            const char = email[i];
-            if (char >= "@")
-                hasAtsign = true;
-            else if (char >= "." && char <= "m")
-                hasDotcom = true;
-            if (hasDotcom && hasAtsign)
-                return true;
-        }
-        return hasDotcom && hasAtsign;
-         */
-    };
-
-    const isPasswordValid = (password) => {
-        if (password.length < 8)            // password must be at least 8 characters
-            return false;
-        let hasUppercase = false;
-        let hasLowercase = false;
-        let hasNumber = false;
-
-        for (let i = 0; i < password.length; i++) {     // loop to make sure password is secure enough
-            const char = password[i];
-            if (char >= "A" && char <= "Z")
-                hasUppercase = true;
-            else if (char >= "a" && char <= "z")
-                hasLowercase = true;
-            else if (char >= "0" && char <= "9")
-                hasNumber = true;
-            if (hasUppercase && hasLowercase && hasNumber)
-                return true;
-        }
-        return hasUppercase && hasLowercase && hasNumber;
-    };
-
     const onButtonClick = async () => {         // email and password verification
             if (!email || !password) {              // if user didn't fill in both email and password fields
                 alert("Please fill in both email and password");
                 return;
             }
-            if (!isEmailValid(email)) {
-                alert("Please enter a valid email address");
-                return;
-            }
-            if (!isPasswordValid(password)) {
-                alert('Log in failed, incorrect password');
-                return;
-            }
-            if (isEmailValid(email) || isPasswordValid(password)) {
-                setSuccessMessage("You are logged in");
-                Cookies.set('email', email);
-                console.log("redirecting...")
-                window.location.href = '/';
+
+            //connect to backend to check for successful login
+            try {
+                const sendData = { email: email, password: password };
+                const response = await $.ajax({
+                    url: 'http://127.0.0.1:5000/login',
+                    type: 'GET',
+                    data: sendData,
+                    success: function(response) {
+                        console.log('Data received:', JSON.stringify(response));
+
+                        //log user in on successful login attempt
+                        if(response.success) {
+                            setSuccessMessage("You are logged in");
+                            Cookies.set('email', email);
+                            console.log("redirecting...")
+                            window.location.href = '/';
+                        } else {
+                            alert("Incorrect email or password")
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
     };
 
