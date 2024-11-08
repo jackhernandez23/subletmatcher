@@ -69,7 +69,6 @@ def signup():
 
 @app.route('/login', methods=['GET'])  # Log in route
 def login():
-    #data = request.get_json()
     email = request.args.get('email')
     password = request.args.get('password')
 
