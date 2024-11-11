@@ -69,6 +69,30 @@ const Signup = () => {
                 Cookies.set('email', email);
                 console.log("redirecting...")
                 window.location.href = '/profile';
+
+                        // make HTTP request to send data to backend
+        try {
+            const response = await fetch('http://127.0.0.1:5000/signup', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'signup/json'
+              },
+              body: JSON.stringify(email)
+            });
+
+            // handle the response
+            if (response.ok) {
+              const result = await response.json();
+              console.log('Success:', result);
+              window.location.href = '/';
+            } else {
+              console.error('Error:', response.statusText);
+              alert("An error occured while signing up")
+            }
+          } catch (error) {
+            console.error('Network error:', error);
+            alert("An error occured while signing up")
+          }
             }
     };
 

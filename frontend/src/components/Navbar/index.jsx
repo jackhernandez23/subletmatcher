@@ -44,6 +44,9 @@ const Navbar = () => {
                             <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/signup">
                                 Sign up
                             </Link>
+                            <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/settings">
+                                Settings
+                            </Link>
                         </div>
                     )}  
             </nav>
