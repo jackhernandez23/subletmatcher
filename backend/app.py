@@ -295,7 +295,30 @@ def listBookmarks():
         return jsonify({"error": str(e)})
     return jsonify({"error": "Listing unsuccessful"})
 
-app.route('/get-user-listings', methods=['GET'])
+@app.route('/delete-bookmark', methods=['POST'])  # Bookmark Listing
+def bookmark():
+    data = request.get_json()
+    email = data.get('email')
+    zipcode = data.get('zipcode')  # Hashes password for storage
+    street = data.get('street')
+    unit = data.get('unit')
+
+    query = "DELETE FROM Bookmarks WHERE email=%s AND street = %s AND zipcode = %s AND Unit = %s"
+    conn = getConn()
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query, (email, zipcode, street, unit))
+            conn.commit()
+            cursor.close()
+            return jsonify({"message": "Deleted bookmarked successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Deleted bookmarked unsuccessful"})
+
+@app.route('/get-user-listings', methods=['GET'])
 def getuserlistings():
     data = request.json
     userEmail = data.get('email')
