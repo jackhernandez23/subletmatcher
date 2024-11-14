@@ -23,8 +23,8 @@ const Navbar = () => {
                         </Link>
                         {loggedIn ? (
                             <div className="flex-4 flex items-center">
-                                <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/profile">
-                                    Profile
+                                <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/mylistings">
+                                    My Listings
                                 </Link>
                                 <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/addlease">
                                 Add a listing
