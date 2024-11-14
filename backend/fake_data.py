@@ -53,12 +53,6 @@ def fullname():
     used_names.append(first_name + last_name)
 
     return first_name + ' ' + last_name
-['Georgina Blake', 'Alwardi Aleena', 'Anna Jack', 'Bill Richardson', 'Anna Sally', 'Maxwell John', 'Hernandez Bill', 'Anna May',
- 'Elliot Richardson', 'Aleena Georgina', 'Bill Blake', 'Blake Rocky', 'Aelly James', 'Aleena Blain', 'Bob Julia', 'Blake Jack',
- 'Aleena Sally', 'Blain Alwardi', 'Jack Sally', 'John Julia', 'Bob Alwardi', 'Hernandez Blain', 'Alwardi Elliot', 'Julia Alwardi',
- 'May Aleena', 'Richardson Anna', 'May Elliot', 'James Elliot', 'John James', 'May Bob', 'Hernandez Alwardi', 'Jack Blain', 'Michelle Sally',
- 'Sally Maxwell', 'Bob Blain', 'Richardson Michelle', 'Sally Jack', 'Elliot Michelle', 'Elliot Julia', 'Bob Blake', 'Jack Richardson',
-'Bob Anna', 'Alwardi Richardson', 'Jack Rocky', 'James Maxwell', 'May John', 'Blain Hernandez', 'Sally John', 'James Georgina']
 
 
 class Property:
