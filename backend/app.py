@@ -442,7 +442,8 @@ def set_pfp():
         filename = secure_filename(userEmail)
         file.save(path.join(pfp_folder, filename))
         return jsonify({"success": "True"})
-    return ''
+
+    return  jsonify({"success": "False", "error": "File was not uploaded"})
 
 
 @app.route('/prop-photos', methods=['POST'])  # Bookmark Listing
@@ -476,7 +477,7 @@ def upload_prop_photos():
 
 
 @app.route('/upload_lease', methods=['POST'])  # Bookmark Listing
-def set_pfp():
+def upload_lease():
     data = request.json
 
     zipcode = data.get('zipcode')
@@ -497,7 +498,8 @@ def set_pfp():
         filename = secure_filename(f"{unit}{street}{zipcode}")
         file.save(path.join(lease_folder, filename))
         return jsonify({"success": "True"})
-    return ''
+
+    return jsonify({"success": "False", "error": "File was not uploaded"})
 
 if __name__ == '__main__':
     app.run(debug=True)
