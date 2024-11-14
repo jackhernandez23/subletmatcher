@@ -366,7 +366,7 @@ def editUserLease():
     startDate = data.get('startDate')
     endDate = data.get('endDate')
 
-    query = " UPDATE Property SET price = %s, available = %s, numOfRoommates = %s, startDate = %s, endDate = %s WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s;"
+    query = "UPDATE Property SET price = %s, available = %s, numOfRoommates = %s, startDate = %s, endDate = %s WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s;"
 
     conn = getConn()
 
@@ -382,6 +382,29 @@ def editUserLease():
     except Exception as e:
         return jsonify({"error": str(e)})
     return jsonify({"error": "Edit unsuccessful"})
+
+app.route('/delete-listing', methods=['POST'])
+def deleteListing():
+    data = request.get_json()
+    email = data.get('email')
+    street = data.get('street')
+    zipcode = data.get('zipcode')
+    unit = data.get('unit')
+
+    query = "DELETE FROM Property WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s"
+    conn = getConn()
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query, (email, street, zipcode,unit))
+            conn.commit()
+            cursor.close()
+            return jsonify({"message": "Deleted bookmarked successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Deleted bookmarked unsuccessful"})
 
 
 if __name__ == '__main__':
