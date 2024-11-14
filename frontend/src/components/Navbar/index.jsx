@@ -34,18 +34,20 @@ const Navbar = () => {
                     </div>
                     {loggedIn ? (
                         <div className="flex-1 flex justify-end">
-                            <button onClick={logout}>Logout</button>
+                            <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/settings">
+                                Settings
+                            </Link>
+                            <button className= "text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" onClick={logout}>
+                                Logout
+                            </button>
                         </div>
                     ) : (
                         <div className="flex-1 flex justify-end">
                             <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/login">
-                                    Login
+                                Login
                             </Link>
                             <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/signup">
                                 Sign up
-                            </Link>
-                            <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/settings">
-                                Settings
                             </Link>
                         </div>
                     )}  
