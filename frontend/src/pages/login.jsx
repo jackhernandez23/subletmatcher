@@ -3,9 +3,16 @@ import Cookies from 'js-cookie';
 import $ from 'jQuery';
 
 const Login = () => {
+
+    // redirect if user is already logged in
+    if (Cookies.get('email')) {
+        window.location.href = '/';
+    }
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+   
 
     const onButtonClick = async () => {         // email and password verification
             if (!email || !password) {              // if user didn't fill in both email and password fields
@@ -59,9 +66,17 @@ return (
                     className={"bg-gray-200 p-2"}
                     type="password"
                 />
-            <button onClick={onButtonClick} className={"bg-blue-500 text-white p-2 rounded"}>
-                Log in
-            </button>
+                <button onClick={onButtonClick} className={"bg-blue-500 text-white p-2 rounded"}>
+                    Log in
+                </button>
+                <div className="flex items-center">
+                    <h1 className="px-4"> 
+                        Need to make an account? 
+                    </h1>
+                    <button onClick={() => { window.location.href = '/signup'; }} className={"bg-blue-500 text-white p-2 rounded"}>
+                        Sign up
+                    </button>
+                </div>
             </div>
         {successMessage && <div className={"text-green-500 text-2xl text-center mt-40"}>
             {successMessage}</div>}

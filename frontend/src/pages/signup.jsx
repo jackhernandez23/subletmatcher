@@ -3,10 +3,15 @@ import {useNavigate} from "react-router-dom";
 import Cookies from 'js-cookie';
 
 const Signup = () => {
+
+    // redirect if user is already logged in
+    if (Cookies.get('email')) {
+        window.location.href = '/';
+    }
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const navigate = useNavigate();
 
     const isEmailValid = (email) => {
         let validEmail = false;
@@ -119,6 +124,14 @@ return (
             <button onClick={onButtonClick} className={"bg-blue-500 text-white p-2 rounded"}>
                 Sign up
             </button>
+            <div className="flex items-center">
+                <h1 className="px-4"> 
+                    Already have an account?
+                </h1>
+                <button onClick={() => { window.location.href = '/login'; }} className={"bg-blue-500 text-white p-2 rounded"}>
+                    Log in
+                </button>
+            </div>
             </div>
         {successMessage && <div className={"text-green-500 text-2xl text-center mt-40"}>
             {successMessage}</div>}
