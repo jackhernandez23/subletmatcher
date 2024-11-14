@@ -353,6 +353,36 @@ def getuserlistings():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+app.route('/edit-user-lease', methods=['POST'])
+def editUserLease():
+    data = request.get_json()
+    street = data.get('street')
+    unit = data.get('unit')
+    zipcode = data.get('zipcode')
+    owner = data.get('owner')
+    price = data.get('price')
+    available = data.get('available')
+    numOfRoommates = data.get('numOfRoommates')
+    startDate = data.get('startDate')
+    endDate = data.get('endDate')
+
+    query = " UPDATE Property SET price = %s, available = %s, numOfRoommates = %s, startDate = %s, endDate = %s WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s;"
+
+    conn = getConn()
+
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(buffered=True)
+            cursor.execute(query, (price, available, numOfRoommates, startDate, endDate, owner ,street, zipcode, unit))
+            conn.commit()
+            cursor.close()
+            return jsonify({"message": "Lease successfully edited"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Edit unsuccessful"})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
