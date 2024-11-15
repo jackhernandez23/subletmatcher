@@ -53,8 +53,8 @@ const Signup = () => {
     };
 
     const onButtonClick = async () => {         // email and password verification
-            if (!email || !password) {              // if user didn't fill in both email and password fields
-                alert("Please fill in both email and password");
+            if (!email || !password || !name || !phoneNumber) {              // if user didn't fill in both email and password fields
+                alert("Please fill in all fields");
                 return;
             }
             if (!isEmailValid(email)) {
@@ -80,16 +80,16 @@ const Signup = () => {
             const response = await fetch('http://127.0.0.1:5000/signup', {
               method: 'POST',
               headers: {
-                'Content-Type': 'signup/json'
+                'Content-Type': 'application/json'
               },
-              body: JSON.stringify(email)
+              body: JSON.stringify({name, phoneNumber, email, password})            // send all fields to backend
             });
 
             // handle the response
             if (response.ok) {
               const result = await response.json();
               console.log('Success:', result);
-              window.location.href = '/';
+              window.location.href = '/login';
             } else {
               console.error('Error:', response.statusText);
               alert("An error occured while signing up")
