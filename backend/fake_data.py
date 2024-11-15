@@ -53,12 +53,6 @@ def fullname():
     used_names.append(first_name + last_name)
 
     return first_name + ' ' + last_name
-['Georgina Blake', 'Alwardi Aleena', 'Anna Jack', 'Bill Richardson', 'Anna Sally', 'Maxwell John', 'Hernandez Bill', 'Anna May',
- 'Elliot Richardson', 'Aleena Georgina', 'Bill Blake', 'Blake Rocky', 'Aelly James', 'Aleena Blain', 'Bob Julia', 'Blake Jack',
- 'Aleena Sally', 'Blain Alwardi', 'Jack Sally', 'John Julia', 'Bob Alwardi', 'Hernandez Blain', 'Alwardi Elliot', 'Julia Alwardi',
- 'May Aleena', 'Richardson Anna', 'May Elliot', 'James Elliot', 'John James', 'May Bob', 'Hernandez Alwardi', 'Jack Blain', 'Michelle Sally',
- 'Sally Maxwell', 'Bob Blain', 'Richardson Michelle', 'Sally Jack', 'Elliot Michelle', 'Elliot Julia', 'Bob Blake', 'Jack Richardson',
-'Bob Anna', 'Alwardi Richardson', 'Jack Rocky', 'James Maxwell', 'May John', 'Blain Hernandez', 'Sally John', 'James Georgina']
 
 
 class Property:
@@ -111,7 +105,7 @@ def make_data(n):
         file.write('DROP TABLE IF EXISTS User;\n')
         file.write('CREATE TABLE Property (street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), owner VARCHAR(127), startDate DATE, endDate DATE, price VARCHAR(31), available BOOL, numOfRoommates INT, PRIMARY KEY (street, unit, zipcode));\n')
         file.write('CREATE TABLE User (email VARCHAR(255) PRIMARY KEY, passphrase VARCHAR(511), phone VARCHAR(31), name VARCHAR(127));\n')
-        file.write('CREATE TABLE Bookmarks (email VARCHAR(255), street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), PRIMARY KEY (email));\n')
+        file.write('CREATE TABLE Bookmarks (email VARCHAR(255), street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), PRIMARY KEY (email, street, unit, zipcode));\n')
         for i in range(n):
             user = User()
             file.write(user.sql_str())

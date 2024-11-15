@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {useNavigate} from "react-router-dom";
 import Cookies from 'js-cookie';
 
 const Signup = () => {
@@ -38,8 +37,7 @@ const Signup = () => {
         let hasLowercase = false;
         let hasNumber = false;
 
-        for (let i = 0; i < password.length; i++) {     // loop to make sure password is secure enough
-            const char = password[i];
+        for (const char of password) {     // loop to make sure password is secure enough
             if (char >= "A" && char <= "Z")
                 hasUppercase = true;
             else if (char >= "a" && char <= "z")
