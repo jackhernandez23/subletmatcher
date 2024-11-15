@@ -5,6 +5,8 @@ import Cookies from 'js-cookie';
 const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
 
@@ -87,43 +89,57 @@ const Signup = () => {
               window.location.href = '/';
             } else {
               console.error('Error:', response.statusText);
-              alert("An error occured while signing up")
+              alert("An error occurred while signing up")
             }
           } catch (error) {
             console.error('Network error:', error);
-            alert("An error occured while signing up")
+            alert("An error occurred while signing up")
           }
             }
     };
 
 return (
     <div className="flex justify-center p-40">
-            <div className="flex justify-center items-center flex-col space-y-6 fixed p-16 bg-gray-300 rounded-md">
-                <h1>
-                    Sign up
-                </h1>
-                <input
-                    value={email}
-                    placeholder="Enter your email here"
-                    onChange={(ev) => setEmail(ev.target.value)}
-                    className={"bg-gray-200 p-2"}
-                    type="email"
-                />
-                <input
-                    value={password}
-                    placeholder="Enter your password"
-                    onChange={(ev) => setPassword(ev.target.value)}
-                    className={"bg-gray-200 p-2"}
-                    type="password"
-                />
+        <div className="flex justify-center items-center flex-col space-y-6 fixed p-16 bg-gray-300 rounded-md">
+            <h1>
+                Sign up
+            </h1>
+            <input
+                value={name}
+                placeholder="First and last name"
+                onChange={(ev) => setName(ev.target.value)}
+                className={"bg-gray-200 p-2"}
+                type="name"
+            />
+            <input
+                value={phoneNumber}
+                placeholder="Phone number"
+                onChange={(ev) => setPhoneNumber(ev.target.value)}
+                className={"bg-gray-200 p-2"}
+                type="phoneNumber"
+            />
+            <input
+                value={email}
+                placeholder="Enter your email here"
+                onChange={(ev) => setEmail(ev.target.value)}
+                className={"bg-gray-200 p-2"}
+                type="email"
+            />
+            <input
+                value={password}
+                placeholder="Enter your password"
+                onChange={(ev) => setPassword(ev.target.value)}
+                className={"bg-gray-200 p-2"}
+                type="password"
+            />
             <button onClick={onButtonClick} className={"bg-blue-500 text-white p-2 rounded"}>
                 Sign up
             </button>
-            </div>
+        </div>
         {successMessage && <div className={"text-green-500 text-2xl text-center mt-40"}>
             {successMessage}</div>}
-        </div>
-    );
+    </div>
+);
 };
 
 export default Signup;
