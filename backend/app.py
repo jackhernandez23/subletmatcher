@@ -351,7 +351,7 @@ def getuserlistings():
             cursor.close()
 
             listings = []
-            for (street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate) in results:
+            for (street, unit, zipcode, owner, startDate, endDate, price, available, numOfRoommates, ) in results:
                 listings.append({
                     "street": street,
                     "unit": unit,
