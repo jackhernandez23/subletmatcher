@@ -1,3 +1,4 @@
+import os.path
 from errno import EOWNERDEAD
 
 from flask import Flask, jsonify, request
@@ -448,6 +449,16 @@ def set_pfp():
     return  jsonify({"success": "False", "error": "File was not uploaded"})
 
 
+@app.route('/get-pfp', methods=['GET'])  # Bookmark Listing
+def get_pfp():
+    data = request.json
+    userEmail = data.get('email')
+
+    filename = secure_filename(userEmail)
+
+    return jsonify({"success": "True", "path": os.path.abspath(path.join(pfp_folder, filename))})
+
+
 @app.route('/prop-photos', methods=['POST'])  # Bookmark Listing
 def upload_prop_photos():
     data = request.json
@@ -476,6 +487,23 @@ def upload_prop_photos():
 
     return jsonify({"success": "True"})
 
+@app.route('/get-photos', methods=['POST'])  # Bookmark Listing
+def get_prop_photos():
+    data = request.json
+    zipcode = data.get('zipcode')
+    street = data.get('street')
+    unit = data.get('unit')
+
+    filepaths = []
+    for count in range(100):
+        filename = secure_filename(f"{unit}{street}{zipcode}{count}")
+        if os.path.exists(path.join(pfp_folder, filename)):
+            filepaths.append(os.path.abspath(path.join(pfp_folder, filename)))
+        else:
+            break
+
+    return jsonify({"success": "True", "path": filepaths})
+
 
 @app.route('/upload_lease', methods=['POST'])  # Bookmark Listing
 def upload_lease():
@@ -501,6 +529,18 @@ def upload_lease():
         return jsonify({"success": "True"})
 
     return jsonify({"success": "False", "error": "File was not uploaded"})
+
+@app.route('/get-lease', methods=['GET'])  # Bookmark Listing
+def get_lease():
+    data = request.json
+
+    zipcode = data.get('zipcode')
+    street = data.get('street')
+    unit = data.get('unit')
+
+    filename = secure_filename(f"{unit}{street}{zipcode}")
+
+    return jsonify({"success": "True", "path": os.path.abspath(path.join(lease_folder, filename))})
 
 
 if __name__ == '__main__':
