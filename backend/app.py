@@ -1,6 +1,7 @@
+import os.path
 from errno import EOWNERDEAD
 
-from flask import Flask, jsonify, request, url_for
+from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 from flask_cors import CORS  # Cross origin requests, assuming React front and Flask back
 from os import path
@@ -369,7 +370,8 @@ def getuserlistings():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-app.route('/edit-user-lease', methods=['POST'])
+
+@app.route('/edit-user-lease', methods=['POST'])
 def editUserLease():
     data = request.get_json()
     street = data.get('street')
@@ -389,7 +391,7 @@ def editUserLease():
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (price, available, numOfRoommates, startDate, endDate, owner ,street, zipcode, unit))
+            cursor.execute(query, (price, available, numOfRoommates, startDate, endDate, owner, street, zipcode, unit))
             conn.commit()
             cursor.close()
             return jsonify({"message": "Lease successfully edited"})
@@ -399,7 +401,8 @@ def editUserLease():
         return jsonify({"error": str(e)})
     return jsonify({"error": "Edit unsuccessful"})
 
-app.route('/delete-listing', methods=['POST'])
+
+@app.route('/delete-listing', methods=['POST'])
 def deleteListing():
     data = request.get_json()
     email = data.get('email')
@@ -412,7 +415,7 @@ def deleteListing():
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (email, street, zipcode,unit))
+            cursor.execute(query, (email, street, zipcode, unit))
             conn.commit()
             cursor.close()
             return jsonify({"message": "Deleted bookmarked successfully"})
@@ -446,6 +449,16 @@ def set_pfp():
     return  jsonify({"success": "False", "error": "File was not uploaded"})
 
 
+@app.route('/get-pfp', methods=['GET'])  # Bookmark Listing
+def get_pfp():
+    data = request.json
+    userEmail = data.get('email')
+
+    filename = secure_filename(userEmail)
+
+    return jsonify({"success": "True", "path": os.path.abspath(path.join(pfp_folder, filename))})
+
+
 @app.route('/prop-photos', methods=['POST'])  # Bookmark Listing
 def upload_prop_photos():
     data = request.json
@@ -457,11 +470,10 @@ def upload_prop_photos():
     if 'file' not in request.files:
         return jsonify({"success": "False", "error": "No file uploaded"})
 
-    files = request.files['files']
     filepaths = []
     count = 0
     # If the user does not select a file, the browser submits an empty file without a filename.
-    for file in files:
+    for file in request.files.getlist('file'):
         if file.filename == '':
             return jsonify({"success": "False", "error": "No file uploaded"})
 
@@ -470,10 +482,27 @@ def upload_prop_photos():
             filepaths.append(filename)
             count += 1
 
-    for i, file in enumerate(files):
+    for i, file in request.files.getlist('file'):
         file.save(path.join(pfp_folder, filepaths[i]))
 
     return jsonify({"success": "True"})
+
+@app.route('/get-photos', methods=['POST'])  # Bookmark Listing
+def get_prop_photos():
+    data = request.json
+    zipcode = data.get('zipcode')
+    street = data.get('street')
+    unit = data.get('unit')
+
+    filepaths = []
+    for count in range(100):
+        filename = secure_filename(f"{unit}{street}{zipcode}{count}")
+        if os.path.exists(path.join(pfp_folder, filename)):
+            filepaths.append(os.path.abspath(path.join(pfp_folder, filename)))
+        else:
+            break
+
+    return jsonify({"success": "True", "path": filepaths})
 
 
 @app.route('/upload_lease', methods=['POST'])  # Bookmark Listing
@@ -500,6 +529,19 @@ def upload_lease():
         return jsonify({"success": "True"})
 
     return jsonify({"success": "False", "error": "File was not uploaded"})
+
+@app.route('/get-lease', methods=['GET'])  # Bookmark Listing
+def get_lease():
+    data = request.json
+
+    zipcode = data.get('zipcode')
+    street = data.get('street')
+    unit = data.get('unit')
+
+    filename = secure_filename(f"{unit}{street}{zipcode}")
+
+    return jsonify({"success": "True", "path": os.path.abspath(path.join(lease_folder, filename))})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
