@@ -119,14 +119,15 @@ def addLease():
     numOfRoomates = data.get('numOfRoommates')
     startDate = data.get('startDate')
     endDate = data.get('endDate')
+    description = data.get('description')
 
-    query = "INSERT INTO Property(street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO Property(street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate, description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
     conn = getConn()
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (street, unit, zipcode, owner, price, available, numOfRoomates, startDate, endDate))
+            cursor.execute(query, (street, unit, zipcode, owner, price, available, numOfRoomates, startDate, endDate, description))
             conn.commit()
             cursor.close()
         return jsonify({"message": "Property uploaded successfully"})
@@ -147,6 +148,7 @@ def getlistings():
     numOfRoommates = request.args.get('numOfRoommates')
     startDate = request.args.get('startDate')
     endDate = request.args.get('endDate')
+    description = request.args.get('description')
 
     query = "SELECT * FROM Property WHERE 1=1"
     params = []
@@ -178,6 +180,9 @@ def getlistings():
     if endDate:
         query += " AND endDate = %s"
         params.append(endDate)
+    if description:
+        query += " AND description = %s"
+        params.append(description)
 
     conn = getConn()
     try:
@@ -351,7 +356,7 @@ def getuserlistings():
             cursor.close()
 
             listings = []
-            for (street, unit, zipcode, owner, startDate, endDate, price, available, numOfRoommates, ) in results:
+            for (street, unit, zipcode, owner, startDate, endDate, price, available, numOfRoommates, description) in results:
                 listings.append({
                     "street": street,
                     "unit": unit,
@@ -361,7 +366,8 @@ def getuserlistings():
                     "available": available,
                     "numOfRoommates": numOfRoommates,
                     "startDate": startDate,
-                    "endDate": endDate
+                    "endDate": endDate,
+                    "description" : description
                 })
 
             return jsonify({"User listings": listings})
@@ -383,15 +389,16 @@ def editUserLease():
     numOfRoommates = data.get('numOfRoommates')
     startDate = data.get('startDate')
     endDate = data.get('endDate')
+    description = data.get('description')
 
-    query = "UPDATE Property SET price = %s, available = %s, numOfRoommates = %s, startDate = %s, endDate = %s WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s;"
+    query = "UPDATE Property SET price = %s, available = %s, numOfRoommates = %s, startDate = %s, endDate = %s, description = %s WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s;"
 
     conn = getConn()
 
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (price, available, numOfRoommates, startDate, endDate, owner, street, zipcode, unit))
+            cursor.execute(query, (price, available, numOfRoommates, startDate, endDate, description, owner, street, zipcode, unit))
             conn.commit()
             cursor.close()
             return jsonify({"message": "Lease successfully edited"})
