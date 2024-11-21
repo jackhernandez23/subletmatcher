@@ -17,7 +17,7 @@ def send_email(recipient):
     subject = f"Subletter 2FA Code: {code}"
     sender = "aelly.bot@gmail.com"  # This email is set up to send automated messages, it can be used in the product
     message = f"Your code is {code}"
-    passphrase = "MY ACCOUNT PASSWORD"
+    passphrase = open("emailpassword.txt").read()
     msg = MIMEText(message)
     msg['Subject'] = subject
     msg['From'] = sender

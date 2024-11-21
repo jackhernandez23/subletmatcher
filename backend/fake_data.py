@@ -84,7 +84,7 @@ class User:
         self.name = fullname()
         self.passphrase = self.name.replace(" ", "").lower()
         self.email = self.passphrase + "@ufl.edu"
-        self.phone = f"325{randint(100000, 999999)}"
+        self.phone = f"325{randint(1000000, 9999999)}"
 
     def __str__(self):
         string_self = f"Email: {self.email}\nPassphrase: {self.passphrase}\nName: {self.name}\nPhone: {self.phone}"
