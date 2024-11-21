@@ -75,12 +75,12 @@ def signup():
             cursor.execute(query, (email, passphrase, name, phone))
             conn.commit()
             cursor.close()
-            return jsonify({"message": "Account created successfully"})
+            return jsonify({'success': True, "message": "Account created successfully"})
     except mysql.connector.Error as err:
-        return jsonify({"error": str(err)})
+        return jsonify({'success': False, "error": str(err)})
     except Exception as e:
-        return jsonify({"error": str(e)})
-    return jsonify({"error": "Account creation unsuccessful"})
+        return jsonify({'success': False, "error": str(e)})
+    return jsonify({'success': False, "error": "Account creation unsuccessful"})
 
 
 @app.route('/login', methods=['GET'])  # Log in route
@@ -345,7 +345,7 @@ def getuserlistings():
     data = request.json
     userEmail = data.get('email')
 
-    query = "SELECT * FROM Property where owner = %s;"
+    query = "SELECT street, unit, zipcode, owner, startDate, endDate, price, available, numOfRoommates, description FROM Property where owner = %s;"
 
     conn = getConn()
     try:
@@ -494,7 +494,7 @@ def upload_prop_photos():
 
     return jsonify({"success": "True"})
 
-@app.route('/get-photos', methods=['POST'])  # Bookmark Listing
+@app.route('/get-photos', methods=['GET'])  # Bookmark Listing
 def get_prop_photos():
     data = request.json
     zipcode = data.get('zipcode')
