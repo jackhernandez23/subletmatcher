@@ -40,8 +40,8 @@ def getConn():
                   'database': config_parse['DEFAULT']['dbname']}
 
     else:  # To operate mysql locally make sure you have it running.
-        config = {'user': 'root',
-                  'password': 'password123',  # I suggest having no password on your local account
+        config = {'user': 'user1',
+                  'password': 'password',  # I suggest having no password on your local account
                   'host': 'localhost',
                   'database': 'sublet_matcher',
                   'auth_plugin': 'mysql_native_password'}
@@ -63,9 +63,9 @@ def test():
 def signup():
     data = request.get_json()
     email = data.get('email')
-    passphrase = data.get('passphrase')  # Hashes password for storage
+    passphrase = data.get('password')  # Hashes password for storage
     name = data.get('name')
-    phone = data.get('phone')
+    phone = data.get('phoneNumber')
 
     query = "INSERT INTO User(Email, Passphrase, Name, Phone) VALUES (%s, sha1(%s), %s, %s)"
     conn = getConn()
@@ -75,7 +75,8 @@ def signup():
             cursor.execute(query, (email, passphrase, name, phone))
             conn.commit()
             cursor.close()
-            return jsonify({'success': True, "message": "Account created successfully"})
+
+            return jsonify({"message": "successfully signed up"})
     except mysql.connector.Error as err:
         return jsonify({'success': False, "error": str(err)})
     except Exception as e:

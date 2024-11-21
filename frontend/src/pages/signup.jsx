@@ -22,9 +22,7 @@ const Signup = () => {
         if (atIndex < 1 && atIndex !== email.lastIndexOf('@'))      // make sure @ is not at start or end
             validEmail= false;
         if (dotIndex < atIndex + 2 && dotIndex === email.length - 1)        // make sure . is after @ and not directly after it
-             validEmail= false;
-        if (!email.endsWith('.com'))
-             validEmail= false;
+             validEmail= false; 
         else
             validEmail = true;
 
@@ -61,43 +59,36 @@ const Signup = () => {
                 alert("Please enter a valid email address");
                 return;
             }
-            if (password.length <  8) {
-                alert("Sign up failed, password must be at least 8 characters long");
-                return;
-            }
             if (!isPasswordValid(password)) {
-                alert('Sign up failed, password must contain at least 1 uppercase, 1 lowercase and 1 number');
+                alert('Sign up failed, password must be at least 8 characters and contain at least 1 uppercase letter, 1 lowercase letter and 1 number');
                 return;
             }
-            if (isEmailValid(email) || isPasswordValid(password)) {
-                setSuccessMessage("Thank you for signing up!");
-                Cookies.set('email', email);
-                console.log("redirecting...")
-                window.location.href = '/mylistings';
 
-                        // make HTTP request to send data to backend
-        try {
-            const response = await fetch('http://127.0.0.1:5000/signup', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({name, phoneNumber, email, password})            // send all fields to backend
-            });
+            // if validity tests pass, make HTTP request to send data to backend
+            try {
+                const response = await fetch('http://127.0.0.1:5000/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name, phoneNumber, email, password})            // send all fields to backend
+                });
 
-            // handle the response
-            if (response.ok) {
-              const result = await response.json();
-              console.log('Success:', result);
-              window.location.href = '/login';
-            } else {
-              console.error('Error:', response.statusText);
-              alert("An error occured while signing up")
-            }
-          } catch (error) {
-            console.error('Network error:', error);
-            alert("An error occured while signing up")
-          }
+                // handle the response
+                if (response.ok) {
+                    Cookies.set('email', email);
+                    setSuccessMessage("Thank you for signing up!"); 
+                    console.log("redirecting...")
+                    window.location.href = '/listings';
+                } else {
+                    console.error('Error:', response.statusText);
+                    alert("An error occured while signing up")
+                    return
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert("An error occured while signing up")
+                return
             }
     };
 
