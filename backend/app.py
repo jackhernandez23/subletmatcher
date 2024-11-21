@@ -104,7 +104,7 @@ def login():
 
         print("Could not connect")
 
-    return jsonify({"error": "Incorrect username or password"})
+    return jsonify({"success": False, "error": "Incorrect username or password"})
 
 
 @app.route('/addlease', methods=['POST'])  # Lease upload route
