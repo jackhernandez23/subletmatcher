@@ -367,7 +367,7 @@ def getuserlistings():
                     "numOfRoommates": numOfRoommates,
                     "startDate": startDate,
                     "endDate": endDate,
-                    "description" : description
+                    "description": description
                 })
 
             return jsonify({"User listings": listings})
