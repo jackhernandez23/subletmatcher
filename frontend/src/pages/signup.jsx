@@ -51,45 +51,45 @@ const Signup = () => {
     };
 
     const onButtonClick = async () => {         // email and password verification
-            if (!email || !password || !name || !phoneNumber) {              // if user didn't fill in both email and password fields
-                alert("Please fill in all fields");
-                return;
-            }
-            if (!isEmailValid(email)) {
-                alert("Please enter a valid email address");
-                return;
-            }
-            if (!isPasswordValid(password)) {
-                alert('Sign up failed, password must be at least 8 characters and contain at least 1 uppercase letter, 1 lowercase letter and 1 number');
-                return;
-            }
+        if (!email || !password || !name || !phoneNumber) {              // if user didn't fill in both email and password fields
+            alert("Please fill in all fields");
+            return;
+        }
+        if (!isEmailValid(email)) {
+            alert("Please enter a valid email address");
+            return;
+        }
+        if (!isPasswordValid(password)) {
+            alert('Sign up failed, password must be at least 8 characters and contain at least 1 uppercase letter, 1 lowercase letter and 1 number');
+            return;
+        }
 
-            // if validity tests pass, make HTTP request to send data to backend
-            try {
-                const response = await fetch('http://127.0.0.1:5000/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name, phoneNumber, email, password})            // send all fields to backend
-                });
+        // if validity tests pass, make HTTP request to send data to backend
+        try {
+            const response = await fetch('http://127.0.0.1:5000/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name, phoneNumber, email, password})            // send all fields to backend
+            });
 
-                // handle the response
-                if (response.ok) {
-                    Cookies.set('email', email);
-                    setSuccessMessage("Thank you for signing up!"); 
-                    console.log("redirecting...")
-                    window.location.href = '/listings';
-                } else {
-                    console.error('Error:', response.statusText);
-                    alert("An error occured while signing up")
-                    return
-                }
-            } catch (error) {
-                console.error('Network error:', error);
+            // handle the response
+            if (response.ok) {
+                Cookies.set('email', email);
+                setSuccessMessage("Thank you for signing up!"); 
+                console.log("redirecting...")
+                window.location.href = '/listings';
+            } else {
+                console.error('Error:', response.statusText);
                 alert("An error occured while signing up")
                 return
             }
+        } catch (error) {
+            console.error('Network error:', error);
+            alert("An error occured while signing up")
+            return
+        }
     };
 
 return (
