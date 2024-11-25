@@ -14,7 +14,7 @@ windows: follow the steps on the [Node.js](https://nodejs.org/) website
 <br><br>
 Once Node.js is installed, navigate to the frontend folder and run the following terminal/powershell commands:
 <br>
-``npm install; npm install tailwindcss; npm install jquery; npm install js-cookie``
+``npm install; npm install tailwindcss; npm install jquery; npm install js-cookie; npm install @mui/material @emotion/react @emotion/styled``
 <br><br>
 ---RUN PROGRAM---
 <br>
