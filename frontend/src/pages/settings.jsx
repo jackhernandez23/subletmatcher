@@ -88,16 +88,16 @@ const Settings = () => {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center p-10 pb-16 h-full">
-            <div className="flex justify-center items-center">
-                <h1 className="text-5xl font-bold">
+        <div className="flex flex-col justify-center items-center px-10 py-5 pb-16 h-full">
+            <div className="pb-10 pt-5">
+                <h1 className="flex justify-center font-bold text-4xl">
                     Settings
                 </h1>
             </div>
 
-            <div className="flex flex-col justify-center items-center py-10 w-full space-y-10">
+            <div className="grid grid-cols-2 grid-rows-2 justify-center items-center w-full">
                 <div className="flex flex-col justify-center items-center">
-                    <h1>Reset Password</h1>
+                    <h1 className="font-bold text-lg">Reset Password</h1>
                     <div className="justify-center grid grid-cols-2 grid-rows-2 space-y-6 items-center">
                         <label className="p-2 mt-6" htmlFor="password">New password</label>
                         <input
@@ -117,30 +117,28 @@ const Settings = () => {
                             type="password"
                             autoComplete="new-password"
                         />
+                    </div>
+                    <button onClick={changePassword} className="bg-blue-500 text-white m-4 p-2 rounded items-center">
+                        Change Password
+                    </button>
                 </div>
 
-                <button onClick={changePassword} className="bg-blue-500 text-white m-4 p-2 rounded items-center">
-                    Change Password
-                </button>
-
-                <div className="flex flex-col justify-center items-center p-20 w-full space-y-10">
-                    <div className="justify-center w-3/4 flex flex-row space-x-2">
-                        <label className="items-start w-1/4" htmlFor="profilePicture">Upload new profile picture </label>
+                <div className="inlet-0 flex flex-col justify-center items-center space-y-10">
+                        <label className="font-bold text-lg" htmlFor="profilePicture">Change Profile picture </label>
                         <input
                             type="file"
                             onChange={(ev) => setProfilePicture(ev.target.value)}
-                            className={"bg-gray-200 p-2 w-1/2"}
+                            className={"p-2 w-full pl-64"}
                         />
                         <button onClick={handleSubmit} className="bg-blue-500 text-white p-2 rounded">
-                            Submit
+                            Change Profile Picture
                         </button>
-                    </div>
                 </div>
 
-                <button onClick={() => {window.location.href = '/mylistings'}} className="bg-blue-500 text-white p-2 rounded">
-                            View My Listings
-                </button>
-
+                <div className="flex col-span-2 justify-center items-center w-full">
+                    <button onClick={() => {window.location.href = '/mylistings'}} className="bg-blue-500 text-white p-2 rounded">
+                                View My Listings
+                    </button>
                 </div>
             </div>
         </div>

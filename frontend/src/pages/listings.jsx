@@ -97,8 +97,10 @@ const Listings = () => {
             }
 
             <div className={currentListing === null ? "flex flex-col justify-center py-5 px-10" : "opacity-50 flex flex-col justify-center py-5 px-10"}>
-                <div className="flex justify-center items-center py-11">
-                    <h1 className="text-xl font-bold">Available Listings</h1>
+                <div className="pb-10 pt-5">
+                    <h1 className="flex justify-center font-bold text-4xl">
+                        Available Listings
+                    </h1>
                 </div>
                 <div className="grid grid-cols-[80%_20%] gap-4">
                     <div className="grid grid-cols-3 gap-4 h-1/2">

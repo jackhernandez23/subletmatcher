@@ -12,6 +12,7 @@ const Upload = () => {
         endDate: '',
         available: '1',
         owner: Cookies.get('email'),
+        description: '',
         lease: null
     })
 
@@ -63,8 +64,8 @@ const Upload = () => {
         }
 
         // validate num roommates
-        if(input.numOfRoommates < 0) {
-            alert("Please enter a valid number of roommates");
+        if(input.numOfRoommates < 0 || input.numOfRoommates > 15) {
+            alert("Please enter a valid number of roommates (0 to 15)");
             return
         }
 
@@ -101,7 +102,7 @@ const Upload = () => {
             if (response.ok) {
               const result = await response.json();
               console.log('Success:', result);
-              //window.location.href = '/mylistings';
+              window.location.href = '/mylistings';
             } else {
               console.error('Error:', response.statusText);
               alert("An error occured while uploading listing")
@@ -116,7 +117,7 @@ const Upload = () => {
     return (
         <div className="flex flex-col justify-center items-center p-10 h-full space-y-10">
             <div>
-                <h1 className="flex justify-center font-bold text-2xl">
+                <h1 className="flex justify-center font-bold text-4xl">
                     Upload a new listing
                 </h1>
             </div>
@@ -203,6 +204,16 @@ const Upload = () => {
                     id="endDate"
                     name="endDate"
                     value={input.endDate}
+                    onChange={handleInput}
+                    />
+                </div>
+
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="description">Description </label>
+                    <textarea className="w-full"
+                    id="description"
+                    name="description"
+                    value={input.description}
                     onChange={handleInput}
                     />
                 </div>

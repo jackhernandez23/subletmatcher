@@ -35,9 +35,11 @@ const MyListings = () => {
     
 
     return (
-        <div className="flex flex-col justify-center p-10">
-            <div className="flex justify-center items-center py-11">
-                <h1 className="text-xl font-bold">My Listings</h1>
+        <div className="flex flex-col justify-center py-5 px-10">
+            <div className="pb-10 pt-5">
+                <h1 className="flex justify-center font-bold text-4xl">
+                    My Listings
+                </h1>
             </div>
             <div className="grid grid-cols-3 gap-4">
                 {listings
