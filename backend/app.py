@@ -1,10 +1,10 @@
-import os.path
+# import os.path
 from errno import EOWNERDEAD
 
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 from flask_cors import CORS  # Cross origin requests, assuming React front and Flask back
-from os import path
+from os import path, makedirs
 import mysql.connector
 import configparser
 
@@ -17,6 +17,15 @@ pfp_folder = 'pfps/'
 prop_pics_folder = 'prop_pics/'
 lease_folder = 'leases/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf'}
+
+if not path.exists(lease_folder):
+    makedirs(lease_folder)
+
+if not path.exists(pfp_folder):
+    makedirs(pfp_folder)
+
+if not path.exists(prop_pics_folder):
+    makedirs(prop_pics_folder)
 
 
 CORS(app)
@@ -110,26 +119,32 @@ def login():
 
 @app.route('/addlease', methods=['POST'])  # Lease upload route
 def addLease():
-    data = request.get_json()
-    street = data.get('street')
-    unit = data.get('unit')
-    zipcode = data.get('zipcode')
-    owner = data.get('owner')
-    price = data.get('price')
-    available = data.get('available')
-    numOfRoomates = data.get('numOfRoommates')
-    startDate = data.get('startDate')
-    endDate = data.get('endDate')
-    description = data.get('description')
+    street = request.form.get('street')
+    unit = request.form.get('unit')
+    zipcode = request.form.get('zipcode')
+    owner = request.form.get('owner')
+    price = request.form.get('price')
+    available = request.form.get('available')
+    numOfRoomates = request.form.get('numOfRoommates')
+    startDate = request.form.get('startDate')
+    endDate = request.form.get('endDate')
+    description = request.form.get('description')
+    file = request.files.get('lease')
 
     query = "INSERT INTO Property(street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate, description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-
+    
     conn = getConn()
     try:
         if conn and conn.is_connected():
+
+            # add property to database
             cursor = conn.cursor(buffered=True)
             cursor.execute(query, (street, unit, zipcode, owner, price, available, numOfRoomates, startDate, endDate, description))
             conn.commit()
+
+            # save lease file
+            filename = secure_filename(f"{unit}{street}{zipcode}.pdf")
+            file.save(path.join(lease_folder, filename))
             cursor.close()
         return jsonify({"message": "Property uploaded successfully"})
     except mysql.connector.Error as err:
@@ -236,9 +251,9 @@ def getListing():
 
 @app.route('/change-password', methods=['POST'])  # Change password
 def changePassword():
-    data = request.json
+    data = request.get_json()
     userEmail = data.get('email')
-    newPassword = data.get('passphrase')
+    newPassword = data.get('password')
 
     query = "UPDATE User SET passphrase = sha1(%s) WHERE email = %s;"
 
@@ -249,7 +264,7 @@ def changePassword():
             cursor.execute(query, (newPassword, userEmail))
             conn.commit()
             cursor.close()
-        return jsonify({"message": "Password changed successfully"})
+        return jsonify({"success": True, "message": "Password changed successfully"})
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)})
     except Exception as e:
@@ -272,7 +287,7 @@ def sendEmail():
 def bookmark():
     data = request.get_json()
     email = data.get('email')
-    zipcode = data.get('zipcode')  # Hashes password for storage
+    zipcode = data.get('zipcode')
     street = data.get('street')
     unit = data.get('unit')
 
@@ -441,13 +456,13 @@ def set_pfp():
 
     # check if the post request has the file part
     if 'file' not in request.files:
-        return jsonify({"success": "False", "error": "No file uploaded"})
+        return jsonify({"success": False, "error": "No file uploaded"})
 
     file = request.files['file']
 
     # If the user does not select a file, the browser submits an empty file without a filename.
     if file.filename == '':
-        return jsonify({"success": "False", "error": "No file uploaded"})
+        return jsonify({"success": False, "error": "No file uploaded"})
 
     if file and allowed_file(file.filename):
         filename = secure_filename(userEmail)
@@ -513,7 +528,7 @@ def get_prop_photos():
     return jsonify({"success": "True", "path": filepaths})
 
 
-@app.route('/upload_lease', methods=['POST'])  # Bookmark Listing
+@app.route('/upload_lease', methods=['POST'])  # Upload lease document
 def upload_lease():
     data = request.json
 
@@ -538,7 +553,7 @@ def upload_lease():
 
     return jsonify({"success": "False", "error": "File was not uploaded"})
 
-@app.route('/get-lease', methods=['GET'])  # Bookmark Listing
+@app.route('/get-lease', methods=['GET'])  # Get lease document
 def get_lease():
     data = request.json
 

@@ -166,3 +166,6 @@ cython_debug/
 # Mac specific
 .DS_Store
 /backend/emailpassword.txt
+/backend/leases
+/backend/pfps
+/backend/prop_pics

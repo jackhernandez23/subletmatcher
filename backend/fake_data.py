@@ -23,7 +23,13 @@ today = int(time())
 streets = ['St', 'Ave', 'Blvd', 'Boulevard', 'Avenue', 'Street', 'Ln', 'Lane']
 names = ["Bill", "Bob", "Aelly", "Jack", "Aleena", "Elliot", "Alwardi", "James", "Hernandez", "Blain", "Sally",
          "Michelle", "John", "Georgina", "Julia", "Rocky", "Maxwell", "Anna", "May", "Richardson", "Blake", "Jane",
-         "Ashley", "Wilcox", "Mike", "Jay", "Rich", "Ishaan", "Gomez", "Hannah"]
+         "Ashley", "Wilcox", "Mike", "Jay", "Rich", "Ishaan", "Gomez", "Hannah", "Jon", "Allie", "Elaine", "Andrew",
+         "Andrea", "Yahtzee", "Pork", "Christopher", "Rizzler", "Mario", "Luigi", "Gojo", "Satou", "Rob"
+         "Goku", "Josh", "Finn", "Abbie", "Chessie", "Chloe", "Mia", "Myra", "Michelle", "Mike", "Banks", "Johnston",
+         "Morgan", "Morgen", "Leif", "Erikson", "Napoleon", "Obama", "Frank", "Dennis", "Charlie",
+         "Smith", "Karlson", "Jackson", "Skywalker", "Dogg", "Doug", "Douglas", "Lamar", "Simpson", "Marge", "Bart", "Lisa"
+         "Cranberry", "Farmer", "Spider", "Mann", "Florida", "Lily", "Levi", "Eren", "Philip", "Joanne", "Abigail",
+         "Samantha", "Samuel", "Sam", "Jason", "Isabel", "Joe", "King", "Queen", "Lindsay"]
 used_names = []
 
 
@@ -46,7 +52,7 @@ def fullname():
     while last_name == first_name or first_name + last_name in used_names:
         last_name = names[randint(0, len(names) - 1)]
 
-        if times == 5:
+        if times == 20:
             times = 0
             first_name = names[randint(0, len(names) - 1)]
 
@@ -107,11 +113,13 @@ def make_data(n):
         file.write('CREATE TABLE User (email VARCHAR(255) PRIMARY KEY, passphrase VARCHAR(511), phone VARCHAR(31), name VARCHAR(127));\n')
         file.write('CREATE TABLE Bookmarks (email VARCHAR(255), street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), PRIMARY KEY (email, street, unit, zipcode));\n')
         for i in range(n):
+            print(f"Creating user {i} of {n}...")
             user = User()
             file.write(user.sql_str())
             users.append(user)
 
         for j in range(n // 4 * 3):
+            print(f"Creating property {j} of {n // 4 * 3}...")
             rand_owner = users[randint(0, len(users) - 1)]
             prop = Property(rand_owner.name)
             file.write(prop.sql_str())

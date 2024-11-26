@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Cookies from 'js-cookie';
 
 const Upload = () => {
-    const [formData, setFormData] = useState({
+    const [input, setInput] = useState({
         price: '',
         street: '',
         zipcode: '',
@@ -11,86 +11,132 @@ const Upload = () => {
         startDate: '',
         endDate: '',
         available: '1',
-        owner: Cookies.get('email')
+        owner: Cookies.get('email'),
+        lease: null
     })
 
     const handleInput = (e) => {
         e.preventDefault();
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setInput({
+            ...input,
             [name]: value
         })
     }
 
+    const handleLeaseUpload = (e) => {
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+          // Check if the file is a PDF
+          if (selectedFile.type !== "application/pdf") {
+            alert("Please upload a PDF.");
+            setInput({
+                ...input,
+                lease: null,
+            })
+          } else {
+            setInput({
+                ...input,
+                lease: selectedFile,
+            })
+          }
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("attempting form submit...")
+        console.log("validating input...")
 
         // check that all inputs are valid
 
         // validate dates
-        if((formData.startDate >= formData.endDate) || (new Date(formData.endDate) < new Date())) {
+        if((input.startDate >= input.endDate) || (new Date(input.endDate) < new Date())) {
             alert("Please enter valid dates")
             return
         }
         
         // validate price
-        if(formData.price <= 0) {
+        if(input.price <= 0) {
             alert("Please enter a valid rent price");
             return
         }
 
         // validate num roommates
-        if(formData.numOfRoommates < 0) {
+        if(input.numOfRoommates < 0) {
             alert("Please enter a valid number of roommates");
             return
         }
 
-        console.log("input data validated, submitting form")
+        // validate if lease has been added
+        if(input.lease == null) {
+            alert("Please upload a lease in PDF format");
+            return
+        }
 
-        // make HTTP request to send data to backend
+        console.log("input data validated, attempting form submission...")
+
+        // make HTTP requests to send data to backend
         try {
+
+            const formData = new FormData();
+            formData.append('street', input.street);
+            formData.append('unit', input.unit);
+            formData.append('zipcode', input.zipcode);
+            formData.append('owner', input.owner);
+            formData.append('price', input.price);
+            formData.append('available', input.available);
+            formData.append('numOfRoommates', input.numOfRoommates);
+            formData.append('startDate', input.startDate);
+            formData.append('endDate', input.endDate);
+            formData.append('description', input.description);
+            formData.append('lease', input.lease);
+
             const response = await fetch('http://127.0.0.1:5000/addlease', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(formData)
+              body: formData
             });
       
             // handle the response
             if (response.ok) {
               const result = await response.json();
               console.log('Success:', result);
-              window.location.href = '/profile';
+              //window.location.href = '/mylistings';
             } else {
               console.error('Error:', response.statusText);
               alert("An error occured while uploading listing")
             }
-          } catch (error) {
+        } catch (error) {
             console.error('Network error:', error);
             alert("An error occured while uploading listing")
-          }
+            return
+        }
     };
 
     return (
-        <div className="flex flex-col justify-center items-center p-20 h-full space-y-20">
+        <div className="flex flex-col justify-center items-center p-10 h-full space-y-10">
             <div>
-                <h1 className="flex justify-center text-lg">
+                <h1 className="flex justify-center font-bold text-2xl">
                     Upload a new listing
                 </h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-10 bg-gray-300 rounded-md w-1/2 h-50 items-center p-4">
+            <form onSubmit={handleSubmit} className="flex flex-col bg-gray-300 rounded-md w-3/5 h-50 items-center py-10 space-y-10">
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="lease file">Upload lease</label>
+                    <input className="justify-end items-end w-3/5"
+                    type="file"
+                    onChange={handleLeaseUpload}
+                    />
+                </div>
+
                 <div className="justify-center w-3/4 flex flex-row">
                     <label className="items-start w-3/4" htmlFor="street">Street </label>
                     <input
                     type="text"
                     id="street"
                     name="street"
-                    value={formData.street}
+                    value={input.street}
                     onChange={handleInput}
                     />
                 </div>
@@ -101,7 +147,7 @@ const Upload = () => {
                     type="text"
                     id="unit"
                     name="unit"
-                    value={formData.unit}
+                    value={input.unit}
                     onChange={handleInput}
                     />
                 </div>
@@ -112,7 +158,7 @@ const Upload = () => {
                     type="text"
                     id="zipcode"
                     name="zipcode"
-                    value={formData.zipcode}
+                    value={input.zipcode}
                     onChange={handleInput}
                     />
                 </div>
@@ -123,7 +169,7 @@ const Upload = () => {
                     type="number"
                     id="price"
                     name="price"
-                    value={formData.price}
+                    value={input.price}
                     onChange={handleInput}
                     />
                 </div>
@@ -134,7 +180,7 @@ const Upload = () => {
                     type="number"
                     id="numOfRoommates"
                     name="numOfRoommates"
-                    value={formData.numOfRoommates}
+                    value={input.numOfRoommates}
                     onChange={handleInput}
                     />
                 </div>
@@ -145,7 +191,7 @@ const Upload = () => {
                     type="date"
                     id="startDate"
                     name="startDate"
-                    value={formData.startDate}
+                    value={input.startDate}
                     onChange={handleInput}
                     />
                 </div>
@@ -156,7 +202,7 @@ const Upload = () => {
                     type="date"
                     id="endDate"
                     name="endDate"
-                    value={formData.endDate}
+                    value={input.endDate}
                     onChange={handleInput}
                     />
                 </div>
