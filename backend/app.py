@@ -1,4 +1,3 @@
-# import os.path
 from errno import EOWNERDEAD
 
 from flask import Flask, jsonify, request
@@ -479,7 +478,7 @@ def get_pfp():
 
     filename = secure_filename(userEmail)
 
-    return jsonify({"success": "True", "path": os.path.abspath(path.join(pfp_folder, filename))})
+    return jsonify({"success": "True", "path": path.abspath(path.join(pfp_folder, filename))})
 
 
 @app.route('/prop-photos', methods=['POST'])  # Bookmark Listing
@@ -520,8 +519,8 @@ def get_prop_photos():
     filepaths = []
     for count in range(100):
         filename = secure_filename(f"{unit}{street}{zipcode}{count}")
-        if os.path.exists(path.join(pfp_folder, filename)):
-            filepaths.append(os.path.abspath(path.join(pfp_folder, filename)))
+        if path.exists(path.join(pfp_folder, filename)):
+            filepaths.append(path.abspath(path.join(pfp_folder, filename)))
         else:
             break
 
@@ -563,7 +562,7 @@ def get_lease():
 
     filename = secure_filename(f"{unit}{street}{zipcode}")
 
-    return jsonify({"success": "True", "path": os.path.abspath(path.join(lease_folder, filename))})
+    return jsonify({"success": "True", "path": path.abspath(path.join(lease_folder, filename))})
 
 
 if __name__ == '__main__':
