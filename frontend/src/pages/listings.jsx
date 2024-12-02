@@ -100,7 +100,7 @@ const Listings = () => {
     };
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center py-8">
             {currentListing != null &&
                 <div className="fixed inset-0 opacity-100 flex w-full h-full items-center justify-center z-50" onClick={() => setCurrentListing(null)}>
                     <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-lg fixed flex flex-col justify-end" onClick={(e) => e.stopPropagation()}>
@@ -122,8 +122,8 @@ const Listings = () => {
             }
 
             <div className={currentListing === null ? "flex flex-col justify-center py-5 px-10" : "opacity-50 flex flex-col justify-center py-5 px-10"}>
-                <div className="pb-10 pt-5">
-                    <h1 className="flex justify-center font-bold text-4xl">
+                <div className="flex items-center justify-center mb-10">
+                    <h1 className="font-bold text-4xl">
                         Available Listings
                     </h1>
                 </div>
@@ -150,9 +150,10 @@ const Listings = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="border p-4 rounded shadow h-96">
-                        <div className="flex flex-col justify-center items-center pb-5">
-                            <h1 className="text-lg font-bold">Filters</h1>
+                    <div className="border p-4 rounded shadow bg-gradient-to-b from-teal-200 to-blue-200 h-96">
+                        <div className="flex flex-col justify-center items-center pb-3">
+                            <h1 className="text-xl font-bold">
+                                Filters</h1>
                         </div>
                         <div className="flex flex-col px-3 pb-3 items-center">
                             <h1 className="font-bold">Price</h1>
@@ -164,7 +165,7 @@ const Listings = () => {
                                 step={100}
                                 onChange={handlePriceChange}
                             />
-                            
+
                         </div>
                         <div className="flex flex-col px-3 pb-3 items-center">
                             <h1 className="font-bold">Roommates</h1>
@@ -174,14 +175,14 @@ const Listings = () => {
                                 min={0}
                                 max={15}
                                 onChange={handleRoommateChange}
-                            />   
+                            />
                         </div>
                         <div className="flex flex-col gap-3 px-3 pb-5 items-center">
                             <h1 className="font-bold">Zip Code</h1>
                             <input className="w-20 rounded shadow"
-                                type="number" 
-                                onChange={handleZipChange} 
-                                placeholder="00000" 
+                                type="number"
+                                onChange={handleZipChange}
+                                placeholder="00000"
                             />
                         </div>
                         <div className="flex flex-col gap-3 pb-5 items-center">
@@ -189,19 +190,19 @@ const Listings = () => {
                             <div className="flex flex-col gap-2 items-center">
                                 <label>From
                                     <input className="rounded shadow mx-3 mb-1"
-                                        type="date" 
+                                        type="date"
                                         onChange={handleStartChange}
                                     />
                                 </label>
                                 <label>To
                                     <input className="rounded shadow mx-3"
-                                        type="date" 
-                                        onChange={handleEndChange}  
+                                        type="date"
+                                        onChange={handleEndChange}
                                     />
                                 </label>
                             </div>
                         </div>
-                    </div>                
+                    </div>
                 </div>
             </div>
         </div>
