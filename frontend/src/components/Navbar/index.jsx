@@ -26,6 +26,9 @@ const Navbar = () => {
                                 <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/addlease">
                                 Add a listing
                                 </Link>
+                                <Link className="text-gray-700 flex items-center px-4 h-full cursor-pointer text-lg" to="/bookmarks">
+                                Bookmarks
+                                </Link>
                             </div>
                         ) : <></>}
                     </div>

@@ -12,6 +12,7 @@ import SignUp from "./pages/signup.jsx";
 import LogIn from "./pages/login.jsx";
 import Addlease from "./pages/addlease.jsx";
 import Settings from "./pages/settings.jsx";
+import Bookmarks from "./pages/bookmarks.jsx";
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/addlease" element={<Addlease />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/bookmarks" element={<Bookmarks />} />
             </Routes>
         </Router>
     );

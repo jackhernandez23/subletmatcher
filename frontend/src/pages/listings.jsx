@@ -1,9 +1,11 @@
 import { React, useState, useEffect } from "react";
 import $ from "jQuery";
 import Slider from '@mui/material/Slider';
+import Cookie from 'js-cookie';
 
 const Listings = () => {
 
+    const loggedIn = Cookie.get('email')
     const [listings, setListings] = useState([])
     const [filters, setFilters] = useState({
         price: 10000,
@@ -33,6 +35,23 @@ const Listings = () => {
         fetchListings()
     }, [])
     
+    const bookmark = (listing) => {
+        const bookmarkData = { 'email': loggedIn, 'street': listing.street, 'unit': listing.unit, 'zipcode': listing.zipcode }
+        try {
+            const response = $.ajax({
+                url: 'http://127.0.0.1:5000/bookmark',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(bookmarkData),
+                dataType: 'json',
+            });
+            console.log('Data received:', JSON.stringify(response));
+            alert("Listing bookmarked successfully")
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            alert("There was an error bookmarking this listing")
+        }
+    }
 
     // proper date formatting
     const formatDate = (dateString) => {
@@ -84,7 +103,7 @@ const Listings = () => {
         <div>
             {currentListing != null &&
                 <div className="fixed inset-0 opacity-100 flex w-full h-full items-center justify-center z-50" onClick={() => setCurrentListing(null)}>
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 h-4/5 max-w-lg fixed" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-lg fixed flex flex-col justify-end" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-2xl font-semibold mb-2">{currentListing.street} Unit {currentListing.unit}</h2>
                         <p className="text-lg pb-1">Zipcode: {currentListing.zipcode}</p>
                         <p className="text-lg pb-1">Owner: {currentListing.owner}</p>
@@ -95,6 +114,9 @@ const Listings = () => {
                         <p className="text-lg pb-1">End Date: {formatDate(currentListing.endDate)}</p>
                         <br></br>
                         <p className="text-lg pb-1">{currentListing.description}</p>
+                        <div className="flex items-center justify-center mt-10">
+                            <button className="bg-blue-500 text-white p-2 rounded" onClick={() => bookmark(currentListing)}>Bookmark</button>
+                        </div>
                     </div>
                 </div>
             }

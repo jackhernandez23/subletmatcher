@@ -229,6 +229,8 @@ def getListing():
     street = request.args.get('street')
     unit = request.args.get('unit')
     zipcode = request.args.get('zipcode')
+    
+    print(f"Received street: {street}, unit: {unit}, zipcode: {zipcode}")
 
     query = "SELECT * FROM Property WHERE street = %s AND unit = %s AND zipcode = %s;"
 
@@ -236,7 +238,7 @@ def getListing():
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(dictionary=True)
-            cursor.execute(query, street, unit, zipcode)
+            cursor.execute(query, (street, unit, zipcode))
             result = cursor.fetchall()
             cursor.close()
             conn.close()
@@ -290,8 +292,8 @@ def sendEmail():
 def bookmark():
     data = request.get_json()
     email = data.get('email')
-    zipcode = data.get('zipcode')
     street = data.get('street')
+    zipcode = data.get('zipcode')
     unit = data.get('unit')
 
     query = "INSERT INTO Bookmarks(Email, Street, Zipcode, Unit) VALUES (%s, %s, %s, %s)"
@@ -299,7 +301,7 @@ def bookmark():
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (email, zipcode, street, unit))
+            cursor.execute(query, (email, street, zipcode, unit))
             conn.commit()
             cursor.close()
             return jsonify({"message": "Bookmarked successfully"})
@@ -319,7 +321,7 @@ def listBookmarks():
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(dictionary=True)
-            cursor.execute(query, userEmail)
+            cursor.execute(query, (userEmail,))
             result = cursor.fetchall()
             cursor.close()
             conn.close()
@@ -442,12 +444,12 @@ def deleteListing():
             cursor.execute(query, (email, street, zipcode, unit))
             conn.commit()
             cursor.close()
-            return jsonify({"message": "Deleted bookmarked successfully"})
+            return jsonify({"message": "Deleted listing successfully"})
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)})
     except Exception as e:
         return jsonify({"error": str(e)})
-    return jsonify({"error": "Deleted bookmarked unsuccessful"})
+    return jsonify({"error": "Deleted listing unsuccessful"})
 
 
 @app.route('/set-pfp', methods=['POST'])  # Bookmark Listing
