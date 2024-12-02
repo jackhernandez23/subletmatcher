@@ -402,22 +402,20 @@ def editUserLease():
     street = data.get('street')
     unit = data.get('unit')
     zipcode = data.get('zipcode')
-    owner = data.get('owner')
+    contact = data.get('contact')
     price = data.get('price')
     available = data.get('available')
     numOfRoommates = data.get('numOfRoommates')
-    startDate = data.get('startDate')
-    endDate = data.get('endDate')
     description = data.get('description')
 
-    query = "UPDATE Property SET price = %s, available = %s, numOfRoommates = %s, startDate = %s, endDate = %s, description = %s WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s;"
+    query = "UPDATE Property SET price = %s, available = %s, numOfRoommates = %s, description = %s WHERE contact = %s AND street = %s AND zipcode = %s AND unit = %s;"
 
     conn = getConn()
 
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (price, available, numOfRoommates, startDate, endDate, description, owner, street, zipcode, unit))
+            cursor.execute(query, (price, available, numOfRoommates, description, contact, street, zipcode, unit))
             conn.commit()
             cursor.close()
             return jsonify({"message": "Lease successfully edited"})
