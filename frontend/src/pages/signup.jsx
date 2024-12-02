@@ -94,8 +94,8 @@ const Signup = () => {
 
 return (
     <div className="flex justify-center p-10">
-        <div className="flex justify-center items-center flex-col space-y-6 fixed p-16 bg-gray-300 rounded-md">
-            <h1>
+        <div className="flex justify-center items-center flex-col space-y-6 fixed p-16 bg-gradient-to-b from-teal-300 to-blue-300 rounded-md">
+            <h1 className="text-xl font-bold">
                 Sign up
             </h1>
             <input
