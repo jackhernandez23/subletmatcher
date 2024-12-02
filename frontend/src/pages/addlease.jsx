@@ -147,7 +147,8 @@ const Upload = () => {
                 </h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col bg-gray-300 rounded-md w-3/5 h-50 items-center py-10 space-y-10">
+            <form onSubmit={handleSubmit} className="min-h-screen flex flex-col bg-gray-300 rounded-md w-3/5 h-50 items-center py-10 space-y-10 bg-gradient-to-b from-teal-300 to-blue-300">
+
                 <div className="justify-center w-3/4 flex flex-row">
                     <label className="items-start w-3/4" htmlFor="lease file">Upload lease</label>
                     <input className="justify-end items-end w-3/5"
