@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { React, useState, useEffect } from "react";
 import Cookies from 'js-cookie';
+import $ from "jQuery";
 
 const Upload = () => {
     const [input, setInput] = useState({
@@ -11,10 +12,33 @@ const Upload = () => {
         startDate: '',
         endDate: '',
         available: '1',
-        owner: Cookies.get('email'),
+        owner: '',
+        contact: Cookies.get('email'),
         description: '',
         lease: null
     })
+
+    useEffect(() => { //get user's name to upload to listing
+        const fetchName = async () => {
+            try {
+                const sendData = { 'email': Cookies.get('email') }
+                const response = await $.ajax({
+                    url: 'http://127.0.0.1:5000/get-name',
+                    method: 'GET',
+                    data: sendData,
+                })
+                console.log('Data received:', JSON.stringify(response));
+                setInput({
+                    ...input,
+                    owner: response[0].name,
+                })
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchName()
+    }, [])
 
     const handleInput = (e) => {
         e.preventDefault();
@@ -85,6 +109,7 @@ const Upload = () => {
             formData.append('unit', input.unit);
             formData.append('zipcode', input.zipcode);
             formData.append('owner', input.owner);
+            formData.append('contact', input.contact);
             formData.append('price', input.price);
             formData.append('available', input.available);
             formData.append('numOfRoommates', input.numOfRoommates);

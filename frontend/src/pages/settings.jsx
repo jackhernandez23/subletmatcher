@@ -50,9 +50,9 @@ const Settings = () => {
                 await $.ajax({
                     url: 'http://127.0.0.1:5000/change-password',
                     type: 'POST',
-                    headers: {
+                    /*headers: {
                         'Content-Type': 'application/json'
-                    },
+                    },*/
                     data: JSON.stringify(sendData),
                     success: function(response) {
                         console.log('Data received:', JSON.stringify(response));

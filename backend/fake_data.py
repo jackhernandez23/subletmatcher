@@ -62,25 +62,26 @@ def fullname():
 
 
 class Property:
-    def __init__(self, owner):
+    def __init__(self, owner, contact):
         self.street = f"{randint(1000, 5999)} {randint(4, 20)}th {streets[randint(0, len(streets) - 1)]}"
         self.startDate, self.endDate = create_dates()
         self.unit = randint(0, 20)
         self.zipcode = randint(32601, 32612)
         self.owner = owner
+        self.contact = contact
         self.price = randint(10, 50) * 100
         self.available = randint(0, 1)
         self.numOfRoommates = randint(0, 4)
 
     def __str__(self):
-        string_self = (f"Street: {self.street}\nUnit: {self.unit}\nZipcode: {self.zipcode}\nOwner: {self.owner}\n"
+        string_self = (f"Street: {self.street}\nUnit: {self.unit}\nZipcode: {self.zipcode}\nOwner: {self.owner}\nContact: {self.contact}\n"
                        f"Duration: {self.startDate}-{self.endDate}\nPrice: ${self.price}\nisAvailable: {'Yes' if self.available else 'No'}"
                        f"\n{'Roommates: ' + str(self.numOfRoommates) if self.numOfRoommates != 0 else ''}")
 
         return string_self
 
     def sql_str(self):
-        sql_st = (f"INSERT INTO Property (street, unit, zipcode, owner, startDate, endDate, price, available, numOfRoommates) VALUES (\'{self.street}\',\'{self.unit}\',\'{self.zipcode}\',\'{self.owner}\',"
+        sql_st = (f"INSERT INTO Property (street, unit, zipcode, owner, contact, startDate, endDate, price, available, numOfRoommates) VALUES (\'{self.street}\',\'{self.unit}\',\'{self.zipcode}\',\'{self.owner}\',\'{self.contact}\',"
                   f"STR_TO_DATE(\'{self.startDate}\', \'%m/%d/%y\'),STR_TO_DATE(\'{self.endDate}\', \'%m/%d/%y\'),{self.price},\'{self.available}\',{self.numOfRoommates});\n")
 
         return sql_st
@@ -109,7 +110,7 @@ def make_data(n):
         file.write('DROP TABLE IF EXISTS Property;\n')
         file.write('DROP TABLE IF EXISTS Bookmarks;\n')
         file.write('DROP TABLE IF EXISTS User;\n')
-        file.write('CREATE TABLE Property (street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), owner VARCHAR(127), startDate DATE, endDate DATE, price VARCHAR(31), available BOOL, numOfRoommates INT, description varchar(1023), PRIMARY KEY (street, unit, zipcode));\n')
+        file.write('CREATE TABLE Property (street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), owner VARCHAR(127), contact VARCHAR(127), startDate DATE, endDate DATE, price VARCHAR(31), available BOOL, numOfRoommates INT, description varchar(1023), PRIMARY KEY (street, unit, zipcode));\n')
         file.write('CREATE TABLE User (email VARCHAR(255) PRIMARY KEY, passphrase VARCHAR(511), phone VARCHAR(31), name VARCHAR(127));\n')
         file.write('CREATE TABLE Bookmarks (email VARCHAR(255), street VARCHAR(255), unit VARCHAR(127), zipcode VARCHAR(31), PRIMARY KEY (email, street, unit, zipcode));\n')
         for i in range(n):
@@ -121,7 +122,7 @@ def make_data(n):
         for j in range(n // 4 * 3):
             print(f"Creating property {j} of {n // 4 * 3}...")
             rand_owner = users[randint(0, len(users) - 1)]
-            prop = Property(rand_owner.name)
+            prop = Property(rand_owner.name, rand_owner.email)
             file.write(prop.sql_str())
 
             if randint(1, 3) == 2:

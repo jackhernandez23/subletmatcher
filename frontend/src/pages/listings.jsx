@@ -15,22 +15,24 @@ const Listings = () => {
 
     const [currentListing, setCurrentListing] = useState(null);
 
-    const closeListing = () => setCurrentListing(null);
-
     // get listing data from backend
     useEffect(() => {
         const fetchListings = async () => {
             try {
-                const response = await $.get('http://127.0.0.1:5000/listings');
+                const response = await $.ajax({
+                    url: 'http://127.0.0.1:5000/listings',
+                    method: 'GET',
+                });
                 console.log('Data received:', JSON.stringify(response));
-                setListings(response);
+                setListings(response)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
-        };
-
-        fetchListings();
-    }, []);
+        }
+    
+        fetchListings()
+    }, [])
+    
 
     // proper date formatting
     const formatDate = (dateString) => {
@@ -85,7 +87,8 @@ const Listings = () => {
                     <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 h-4/5 max-w-lg fixed" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-2xl font-semibold mb-2">{currentListing.street} Unit {currentListing.unit}</h2>
                         <p className="text-lg pb-1">Zipcode: {currentListing.zipcode}</p>
-                        <p className="text-lg pb-1">Contact: {currentListing.owner}</p>
+                        <p className="text-lg pb-1">Owner: {currentListing.owner}</p>
+                        <p className="text-lg pb-1">Contact: {currentListing.contact}</p>
                         <p className="text-lg pb-1">Price: ${currentListing.price}</p>
                         <p className="text-lg pb-1">Number of Roommates: {currentListing.numOfRoommates}</p>
                         <p className="text-lg pb-1">Start Date: {formatDate(currentListing.startDate)}</p>
@@ -116,7 +119,8 @@ const Listings = () => {
                             <div key={index} onClick={() => setCurrentListing(listing)} className="border p-4 rounded shadow">
                                 <h2 className="text-l font-bold">{listing.street} Unit {listing.unit}</h2>
                                 <p>Zipcode: {listing.zipcode}</p>
-                                <p>Contact: {listing.owner}</p>
+                                <p>Owner: {listing.owner}</p>
+                                <p>Contact: {listing.contact}</p>
                                 <p>Price: ${listing.price}</p>
                                 <p>Number of Roommates: {listing.numOfRoommates}</p>
                                 <p>Start Date: {formatDate(listing.startDate)}</p>

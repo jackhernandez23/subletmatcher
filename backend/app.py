@@ -28,7 +28,6 @@ if not path.exists(prop_pics_folder):
 
 
 CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 def allowed_file(filename):
@@ -122,6 +121,7 @@ def addLease():
     unit = request.form.get('unit')
     zipcode = request.form.get('zipcode')
     owner = request.form.get('owner')
+    contact = request.form.get('contact')
     price = request.form.get('price')
     available = request.form.get('available')
     numOfRoomates = request.form.get('numOfRoommates')
@@ -130,7 +130,7 @@ def addLease():
     description = request.form.get('description')
     file = request.files.get('lease')
 
-    query = "INSERT INTO Property(street, unit, zipcode, owner, price, available, numOfRoommates, startDate, endDate, description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO Property(street, unit, zipcode, owner, contact, price, available, numOfRoommates, startDate, endDate, description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     
     conn = getConn()
     try:
@@ -138,7 +138,7 @@ def addLease():
 
             # add property to database
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (street, unit, zipcode, owner, price, available, numOfRoomates, startDate, endDate, description))
+            cursor.execute(query, (street, unit, zipcode, owner, contact, price, available, numOfRoomates, startDate, endDate, description))
             conn.commit()
 
             # save lease file
@@ -158,6 +158,7 @@ def getlistings():
     unit = request.args.get('unit')
     zipcode = request.args.get('zipcode')
     owner = request.args.get('owner')
+    contact = request.args.get('contact')
     price = request.args.get('price')
     available = request.args.get('available')
     numOfRoommates = request.args.get('numOfRoommates')
@@ -180,6 +181,9 @@ def getlistings():
     if owner:
         query += " AND owner = %s"
         params.append(owner)
+    if contact:
+        query += " AND contact = %s"
+        params.append(contact)
     if price:
         query += " AND price = %s"
         params.append(price)
@@ -563,6 +567,30 @@ def get_lease():
     filename = secure_filename(f"{unit}{street}{zipcode}")
 
     return jsonify({"success": "True", "path": path.abspath(path.join(lease_folder, filename))})
+
+@app.route('/get-name', methods=['GET'])  # user's name from their email
+def get_name():
+    user_email = request.args.get('email')
+    query = "SELECT name FROM User WHERE email = %s;"
+    conn = getConn()
+
+    try:
+        if conn and conn.is_connected():
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(query, (user_email,))
+            result = cursor.fetchall()
+            cursor.close()
+            conn.close()
+
+            if result:
+                return jsonify(result)
+            else:
+                return jsonify([])
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    return jsonify({"error": "Listing unsuccessful"})
 
 
 if __name__ == '__main__':
