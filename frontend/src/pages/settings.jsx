@@ -118,7 +118,7 @@ const Settings = () => {
                             autoComplete="new-password"
                         />
                     </div>
-                    <button onClick={changePassword} className="bg-blue-500 text-white m-4 p-2 rounded items-center">
+                    <button onClick={changePassword} className="mt-4 bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition">
                         Change Password
                     </button>
                 </div>
@@ -130,13 +130,13 @@ const Settings = () => {
                             onChange={(ev) => setProfilePicture(ev.target.value)}
                             className={"p-2 w-full pl-64"}
                         />
-                        <button onClick={handleSubmit} className="bg-blue-500 text-white p-2 rounded">
+                        <button onClick={handleSubmit} className="bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition">
                             Change Profile Picture
                         </button>
                 </div>
 
                 <div className="flex col-span-2 justify-center items-center w-full">
-                    <button onClick={() => {window.location.href = '/mylistings'}} className="bg-blue-500 text-white p-2 rounded">
+                    <button onClick={() => {window.location.href = '/mylistings'}} className="bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition">
                                 View My Listings
                     </button>
                 </div>

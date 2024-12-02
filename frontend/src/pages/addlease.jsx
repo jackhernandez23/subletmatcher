@@ -243,7 +243,10 @@ const Upload = () => {
                     />
                 </div>
 
-                <button type="submit">Submit</button>
+                <button type="submit"
+                className="bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition"
+                >
+                    Submit</button>
             </form>
         </div>
     );

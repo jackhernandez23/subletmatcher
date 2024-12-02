@@ -126,7 +126,7 @@ return (
                 className={"bg-gray-200 p-2"}
                 type="password"
             />
-            <button onClick={onButtonClick} className={"bg-blue-500 text-white p-2 rounded"}>
+            <button onClick={onButtonClick} className={"bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition"}>
                 Sign up
             </button>
             <div className="flex items-center">
@@ -135,7 +135,7 @@ return (
                 </h1>
                 <button onClick={() => {
                     window.location.href = '/login';
-                }} className={"bg-blue-500 text-white p-2 rounded"}>
+                }} className={"bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition"}>
                     Log in
                 </button>
             </div>
