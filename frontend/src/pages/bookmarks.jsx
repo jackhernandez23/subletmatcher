@@ -67,6 +67,26 @@ const Bookmarks = () => {
             loadBookmarks();
         } 
     }, [bookmarklist]);
+
+    const deleteBookmark = (property) => { 
+        try {
+            const response = $.ajax({
+                url: `http://127.0.0.1:5000/delete-bookmark?email=${encodeURIComponent(loggedIn)}&street=${encodeURIComponent(property.street)}&unit=${encodeURIComponent(property.unit)}&zipcode=${encodeURIComponent(property.zipcode)}`,
+                method: 'POST',
+                dataType: 'json',
+                success: (response) => {
+                    console.log('Data received:', JSON.stringify(response));
+                    alert("bookmark deleted successfully")
+                    window.location.reload();
+                },
+                error: (error) => {
+                    console.error('Error fetching data:', error);
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }   
     
 
     // proper date formatting
@@ -95,6 +115,9 @@ const Bookmarks = () => {
                         <p className="text-lg pb-1">End Date: {formatDate(currentListing.endDate)}</p>
                         <br></br>
                         <p className="text-lg pb-1">{currentListing.description}</p>
+                        <div className="flex items-center justify-center mt-10">
+                            <button className="bg-blue-500 text-white p-2 rounded" onClick={() => deleteBookmark(currentListing)}>Delete Bookmark</button>
+                        </div>
                     </div>
                 </div>
             }

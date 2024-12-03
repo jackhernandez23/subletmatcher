@@ -337,18 +337,17 @@ def listBookmarks():
 
 @app.route('/delete-bookmark', methods=['POST'])  # Bookmark Listing
 def delete_bookmark():
-    data = request.get_json()
-    email = data.get('email')
-    zipcode = data.get('zipcode')
-    street = data.get('street')
-    unit = data.get('unit')
+    email = request.args.get('email')
+    zipcode = request.args.get('zipcode')
+    street = request.args.get('street')
+    unit = request.args.get('unit')
 
     query = "DELETE FROM Bookmarks WHERE email=%s AND street = %s AND zipcode = %s AND Unit = %s"
     conn = getConn()
     try:
         if conn and conn.is_connected():
             cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (email, zipcode, street, unit))
+            cursor.execute(query, (email, street, zipcode, unit))
             conn.commit()
             cursor.close()
             return jsonify({"message": "Deleted bookmarked successfully"})
