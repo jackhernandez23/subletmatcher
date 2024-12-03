@@ -27,6 +27,7 @@ const Listings = () => {
                 });
                 console.log('Data received:', JSON.stringify(response));
                 setListings(response)
+                console.log("listings", listings )
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -44,9 +45,14 @@ const Listings = () => {
                 contentType: 'application/json',
                 data: JSON.stringify(bookmarkData),
                 dataType: 'json',
-            });
-            console.log('Data received:', JSON.stringify(response));
-            alert("Listing bookmarked successfully")
+                success: (response) => {
+                    console.log('Data received:', JSON.stringify(response));
+                    alert("Listing bookmarked successfully")
+                },
+                error: (error) => {
+                    console.error('Error fetching data:', error);
+                },
+            }); 
         } catch (error) {
             console.error('Error fetching data:', error);
             alert("There was an error bookmarking this listing")

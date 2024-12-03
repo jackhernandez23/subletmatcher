@@ -7,21 +7,27 @@ const Bookmarks = () => {
     const loggedIn = Cookie.get('email')
 
     const [bookmarklist, setBookmarklist] = useState([])
+
     const [bookmark, setBookmark] = useState([])
 
     const [currentListing, setCurrentListing] = useState(null);
 
     // get bookmark data from backend
     useEffect(() => {
-        const fetchBookmarks = () => {
+        const fetchBookmarks = async () => {
             try {
-                const response = $.ajax({
+                const response = await $.ajax({
                     url: `http://127.0.0.1:5000/list-bookmarks?email=${encodeURIComponent(loggedIn)}`,
                     method: 'GET',
                     dataType: 'json',
+                    success: (response) => {
+                        console.log('Data received:', JSON.stringify(response));
+                        setBookmarklist(response);
+                    },
+                    error: (error) => {
+                        console.error('Error fetching data:', error);
+                    },
                 });
-                console.log('Data received:', JSON.stringify(response));
-                setBookmarklist(response)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -32,34 +38,36 @@ const Bookmarks = () => {
     
     useEffect(() => {
         const loadBookmarks = async () => {
-            console.log("loading bookmarks ", bookmarklist)
-            const bookmarks = []
-            
-            for (const element of bookmarklist) {
-                console.log("loading element ", element)
+            const newBookmarks = []
+            for(const element of bookmarklist) {
                 try {
                     const response = await $.ajax({
-                        url: `http://127.0.0.1:5000/get-listing?street=${encodeURIComponent(element.street)}&unit=${encodeURIComponent(element.unit)}&zipcode=${encodeURIComponent(element.zipcode)}`,
+                        url: `http://127.0.0.1:5000/get-listing?street=${encodeURIComponent(element.Street)}&unit=${encodeURIComponent(element.Unit)}&zipcode=${encodeURIComponent(element.Zipcode)}`,
                         method: 'GET',
                         dataType: 'json',
+                        success: (response) => {
+                            console.log('Data received:', JSON.stringify(response));
+                            if(response.length > 0)
+                                newBookmarks.push(response[0])
+                        },
+                        error: (error) => {
+                            console.error('Error fetching data:', error);
+                        },
                     });
-                    console.log('Data received:', JSON.stringify(response));
-                    bookmarks.push(response)
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 }
             }
 
-            setBookmark(bookmarks)
-            
-        }
-
-        console.log("bookmarklist: ", bookmarklist)
-        if (bookmarklist.length > 0) {
+            setBookmark(newBookmarks);
+            console.log("bookmark", bookmark )
+        };
+    
+        if (bookmarklist.length > 0 && bookmark.length == 0) {
             loadBookmarks();
-        }
-
-    },  [bookmarklist])
+        } 
+    }, [bookmarklist]);
+    
 
     // proper date formatting
     const formatDate = (dateString) => {

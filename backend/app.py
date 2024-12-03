@@ -230,8 +230,6 @@ def getListing():
     unit = request.args.get('unit')
     zipcode = request.args.get('zipcode')
     
-    print(f"Received street: {street}, unit: {unit}, zipcode: {zipcode}")
-
     query = "SELECT * FROM Property WHERE street = %s AND unit = %s AND zipcode = %s;"
 
     conn = getConn()
