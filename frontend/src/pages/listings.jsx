@@ -120,9 +120,10 @@ const Listings = () => {
                         <p className="text-lg pb-1">End Date: {formatDate(currentListing.endDate)}</p>
                         <br></br>
                         <p className="text-lg pb-1">{currentListing.description}</p>
+                        {loggedIn &&
                         <div className="flex items-center justify-center mt-10">
                             <button className="bg-blue-500 text-white p-2 rounded" onClick={() => bookmark(currentListing)}>Bookmark</button>
-                        </div>
+                        </div>}
                     </div>
                 </div>
             }
