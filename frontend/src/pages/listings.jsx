@@ -14,9 +14,8 @@ const Listings = () => {
         startDate: "",
         endDate: "",
     })
-    const [leasePath, setLeasePath] = useState('')
-
     const [currentListing, setCurrentListing] = useState(null);
+    const [currentPropPhotos, setCurrentPropPhotos] = useState([]);
 
     // get listing data from backend
     useEffect(() => {
@@ -35,6 +34,11 @@ const Listings = () => {
     
         fetchListings()
     }, [])
+
+    const openListing = (listing) => {
+        setCurrentListing(listing)
+        getPhotos(listing)
+    }
     
     const bookmark = (listing) => {
         const bookmarkData = { 'email': loggedIn, 'street': listing.street, 'unit': listing.unit, 'zipcode': listing.zipcode }
@@ -68,7 +72,37 @@ const Listings = () => {
         document.body.appendChild(link);
         link.click();
         link.remove();
-        setLeasePath('')
+    }
+
+    const getPhotos = async (listing) => {
+        let numPropPhotos = 0
+        let newPropPhotos = []
+        try {
+            await $.ajax({ 
+                url: `http://127.0.0.1:5000/get-num-prop-photos?street=${encodeURIComponent(listing.street)}&unit=${encodeURIComponent(listing.unit)}&zipcode=${encodeURIComponent(listing.zipcode)}`,
+                method: 'GET',
+                success: (response) => {
+                    console.log('Data received:', JSON.stringify(response));
+                    numPropPhotos = response.numPics
+                    console.log(numPropPhotos)
+                },
+                error: (error) => {
+                    console.error('Error fetching data:', error);
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+
+        console.log("continuing")
+
+        const baseURL = `http://127.0.0.1:5000/prop-photo/${encodeURIComponent(listing.street)}/${encodeURIComponent(listing.unit)}/${encodeURIComponent(listing.zipcode)}/`
+
+        for (let i = 0; i < numPropPhotos; i++)
+            newPropPhotos.push(baseURL + encodeURIComponent(i))
+
+        setCurrentPropPhotos(newPropPhotos)
+        console.log(currentPropPhotos )
     }
 
     // proper date formatting
@@ -121,18 +155,29 @@ const Listings = () => {
         <div className="min-h-screen bg-gray-100 flex flex-col items-center py-8">
             {currentListing != null &&
                 <div className="fixed inset-0 opacity-100 flex w-full h-full items-center justify-center z-50" onClick={() => setCurrentListing(null)}>
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-lg fixed flex flex-col justify-end" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="text-2xl font-semibold mb-2">{currentListing.street} Unit {currentListing.unit}</h2>
-                        <p className="text-lg pb-1">Zipcode: {currentListing.zipcode}</p>
-                        <p className="text-lg pb-1">Owner: {currentListing.owner}</p>
-                        <p className="text-lg pb-1">Contact: {currentListing.contact}</p>
-                        <p className="text-lg pb-1">Price: ${currentListing.price}</p>
-                        <p className="text-lg pb-1">Number of Roommates: {currentListing.numOfRoommates}</p>
-                        <p className="text-lg pb-1">Start Date: {formatDate(currentListing.startDate)}</p>
-                        <p className="text-lg pb-1">End Date: {formatDate(currentListing.endDate)}</p>
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl fixed grid grid-cols-2 justify-end" onClick={(e) => e.stopPropagation()}>
+                        <div className="col-span-2 flex items-center justify-center">
+                            <h2 className="col-span-2 text-2xl font-semibold mb-2">{currentListing.street} Unit {currentListing.unit}</h2>
+                        </div>
+                        <div className="col-span-1">
+                            <p className="text-lg pb-1">Zipcode: {currentListing.zipcode}</p>
+                            <p className="text-lg pb-1">Owner: {currentListing.owner}</p>
+                            <p className="text-lg pb-1">Contact: {currentListing.contact}</p>
+                            <p className="text-lg pb-1">Price: ${currentListing.price}</p>
+                            <p className="text-lg pb-1">Number of Roommates: {currentListing.numOfRoommates}</p>
+                            <p className="text-lg pb-1">Start Date: {formatDate(currentListing.startDate)}</p>
+                            <p className="text-lg pb-1">End Date: {formatDate(currentListing.endDate)}</p>
+                        </div>
+                        <div>
+                            {currentPropPhotos.map((picture) => (
+                                <div className="w-1/2 m-2 col-start-2">
+                                    <img src={picture}/>
+                                </div>
+                            ))}
+                        </div>
                         <br></br>
-                        <p className="text-lg pb-1">{currentListing.description}</p>
-                        <div className="flex justify-center">
+                        <p className="text-lg pb-1 col-span-2">{currentListing.description}</p>
+                        <div className="flex justify-center col-span-2">
                             <div className="flex items-center justify-center m-10">
                                 <button className="bg-blue-500 text-white p-2 rounded" onClick={() => downloadLease(currentListing)}>Download Lease</button>
                             </div>
@@ -140,7 +185,7 @@ const Listings = () => {
                             <div className="flex items-center justify-center m-10">
                                 <button className="bg-blue-500 text-white p-2 rounded" onClick={() => bookmark(currentListing)}>Bookmark</button>
                             </div>}
-                        </div>
+                        </div>   
                     </div>
                 </div>
             }
@@ -162,7 +207,7 @@ const Listings = () => {
                             && (filters.endDate == "" ? true : (new Date(listing.endDate) <= filters.endDate))
                         )
                         .map((listing, index) => (
-                            <div key={index} onClick={() => setCurrentListing(listing)} className="border p-4 rounded shadow">
+                            <div key={index} onClick={() => openListing(listing)} className="border p-4 rounded shadow">
                                 <h2 className="text-l font-bold">{listing.street} Unit {listing.unit}</h2>
                                 <p>Zipcode: {listing.zipcode}</p>
                                 <p>Owner: {listing.owner}</p>

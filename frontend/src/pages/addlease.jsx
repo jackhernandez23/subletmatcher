@@ -15,7 +15,8 @@ const Upload = () => {
         owner: '',
         contact: Cookies.get('email'),
         description: '',
-        lease: null
+        lease: null,
+        photos: [],
     })
 
     useEffect(() => { //get user's name to upload to listing
@@ -68,6 +69,25 @@ const Upload = () => {
         }
     };
 
+
+    const handlePhotoUpload = (e) => {
+        const files = e.target.files;
+        for (const selectedFile of files) {
+            if (selectedFile) {
+                // Check if the file is a png jpg or jpeg
+                if (selectedFile.type !== "image/jpg" && selectedFile.type !== "image/png" && selectedFile.type !== "application/jpeg") {
+                    alert("Please upload an image in png, jpeg, or jpg format.");
+                } else {
+                    setInput({
+                        ...input,
+                        photos: [...input.photos, selectedFile],
+                    })
+                    console.log(input.photos )
+                }
+            }
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -99,6 +119,12 @@ const Upload = () => {
             return
         }
 
+        // validate if photos have been added
+        if(input.photos.length < 1) {
+            alert("Please upload at least one property photo");
+            return
+        }
+
         console.log("input data validated, attempting form submission...")
 
         // make HTTP requests to send data to backend
@@ -117,6 +143,9 @@ const Upload = () => {
             formData.append('endDate', input.endDate);
             formData.append('description', input.description);
             formData.append('lease', input.lease);
+        
+            for (photo of photos)
+                formData.append(`photos`, photo);
 
             const response = await fetch('http://127.0.0.1:5000/addlease', {
               method: 'POST',
@@ -151,9 +180,19 @@ const Upload = () => {
 
                 <div className="justify-center w-3/4 flex flex-row">
                     <label className="items-start w-3/4" htmlFor="lease file">Upload lease</label>
-                    <input className="justify-end items-end w-3/5"
+                    <input
+                    className="justify-end items-end w-3/5"
                     type="file"
                     onChange={handleLeaseUpload}
+                    />
+                </div>
+
+                <div className="justify-center w-3/4 flex flex-row">
+                    <label className="items-start w-3/4" htmlFor="lease file">Upload photos</label>
+                    <input
+                    className="justify-end items-end w-3/5"
+                    type="file"
+                    onChange={handlePhotoUpload}
                     />
                 </div>
 

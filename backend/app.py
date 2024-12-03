@@ -12,16 +12,12 @@ from send_email import send_email, get_code
 
 app = Flask(__name__)
 
-pfp_folder = 'pfps/'
 prop_pics_folder = 'prop_pics/'
 lease_folder = 'leases/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf'}
 
 if not path.exists(lease_folder):
     makedirs(lease_folder)
-
-if not path.exists(pfp_folder):
-    makedirs(pfp_folder)
 
 if not path.exists(prop_pics_folder):
     makedirs(prop_pics_folder)
@@ -128,7 +124,8 @@ def addLease():
     startDate = request.form.get('startDate')
     endDate = request.form.get('endDate')
     description = request.form.get('description')
-    file = request.files.get('lease')
+    lease = request.files.get('lease')
+    photos = request.files.getlist('photos')
 
     query = "INSERT INTO Property(street, unit, zipcode, owner, contact, price, available, numOfRoommates, startDate, endDate, description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     
@@ -142,9 +139,27 @@ def addLease():
             conn.commit()
 
             # save lease file
-            filename = secure_filename(f"{unit}{street}{zipcode}.pdf")
-            file.save(path.join(lease_folder, filename))
+            lease_filename = secure_filename(f"{unit}{street}{zipcode}.pdf")
+            lease.save(path.join(lease_folder, lease_filename))
+
+            #save photos
+            print(photos)
+            count = 0
+            for photo in photos:
+                print(photo)
+                if photo and photo.filename:
+                    if photo.filename.lower().endswith("png"):
+                        photo_filename = secure_filename(f"{unit}{street}{zipcode}{count}.png")
+                    elif photo.filename.lower().endswith("jpg"):
+                        photo_filename = secure_filename(f"{unit}{street}{zipcode}{count}.jpg")
+                    else:
+                        photo_filename = secure_filename(f"{unit}{street}{zipcode}{count}.jpeg")
+
+                    photo.save(path.join(prop_pics_folder, photo_filename))
+                    count += 1
+
             cursor.close()
+                
         return jsonify({"message": "Property uploaded successfully"})
     except mysql.connector.Error as err:
         return jsonify({"error": str(err)})
@@ -358,43 +373,6 @@ def delete_bookmark():
     return jsonify({"error": "Deleted bookmarked unsuccessful"})
 
 
-@app.route('/get-user-listings', methods=['GET'])
-def getuserlistings():
-    data = request.json
-    userEmail = data.get('email')
-
-    query = "SELECT street, unit, zipcode, owner, startDate, endDate, price, available, numOfRoommates, description FROM Property where owner = %s;"
-
-    conn = getConn()
-    try:
-        if conn and conn.is_connected():
-            cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (userEmail,))
-            results = cursor.fetchall()
-            cursor.close()
-
-            listings = []
-            for (street, unit, zipcode, owner, startDate, endDate, price, available, numOfRoommates, description) in results:
-                listings.append({
-                    "street": street,
-                    "unit": unit,
-                    "zipcode": zipcode,
-                    "owner": owner,
-                    "price": price,
-                    "available": available,
-                    "numOfRoommates": numOfRoommates,
-                    "startDate": startDate,
-                    "endDate": endDate,
-                    "description": description
-                })
-
-            return jsonify({"User listings": listings})
-    except mysql.connector.Error as err:
-        return jsonify({"error": str(err)})
-    except Exception as e:
-        return jsonify({"error": str(e)})
-
-
 @app.route('/edit-user-lease', methods=['POST'])
 def editUserLease():
     data = request.get_json()
@@ -425,64 +403,7 @@ def editUserLease():
     return jsonify({"error": "Edit unsuccessful"})
 
 
-@app.route('/delete-listing', methods=['POST'])
-def deleteListing():
-    data = request.get_json()
-    email = data.get('email')
-    street = data.get('street')
-    zipcode = data.get('zipcode')
-    unit = data.get('unit')
-
-    query = "DELETE FROM Property WHERE owner = %s AND street = %s AND zipcode = %s AND unit = %s"
-    conn = getConn()
-    try:
-        if conn and conn.is_connected():
-            cursor = conn.cursor(buffered=True)
-            cursor.execute(query, (email, street, zipcode, unit))
-            conn.commit()
-            cursor.close()
-            return jsonify({"message": "Deleted listing successfully"})
-    except mysql.connector.Error as err:
-        return jsonify({"error": str(err)})
-    except Exception as e:
-        return jsonify({"error": str(e)})
-    return jsonify({"error": "Deleted listing unsuccessful"})
-
-
-@app.route('/set-pfp', methods=['POST'])  # Bookmark Listing
-def set_pfp():
-    data = request.json
-    userEmail = data.get('email')
-
-    # check if the post request has the file part
-    if 'file' not in request.files:
-        return jsonify({"success": False, "error": "No file uploaded"})
-
-    file = request.files['file']
-
-    # If the user does not select a file, the browser submits an empty file without a filename.
-    if file.filename == '':
-        return jsonify({"success": False, "error": "No file uploaded"})
-
-    if file and allowed_file(file.filename):
-        filename = secure_filename(userEmail)
-        file.save(path.join(pfp_folder, filename))
-        return jsonify({"success": "True"})
-
-    return  jsonify({"success": "False", "error": "File was not uploaded"})
-
-
-@app.route('/get-pfp', methods=['GET'])  # Bookmark Listing
-def get_pfp():
-    data = request.json
-    userEmail = data.get('email')
-
-    filename = secure_filename(userEmail)
-
-    return jsonify({"success": "True", "path": path.abspath(path.join(pfp_folder, filename))})
-
-
-@app.route('/prop-photos', methods=['POST'])  # Bookmark Listing
+@app.route('/prop-photos', methods=['POST'])  # upload extra property photos
 def upload_prop_photos():
     data = request.json
     zipcode = data.get('zipcode')
@@ -506,27 +427,56 @@ def upload_prop_photos():
             count += 1
 
     for i, file in request.files.getlist('file'):
-        file.save(path.join(pfp_folder, filepaths[i]))
+        file.save(path.join(prop_pics_folder, filepaths[i]))
 
     return jsonify({"success": "True"})
 
-@app.route('/get-photos', methods=['GET'])  # Bookmark Listing
+
+@app.route('/get-num-prop-photos', methods=['GET'])  # get property photos
 def get_prop_photos():
-    data = request.json
-    zipcode = data.get('zipcode')
-    street = data.get('street')
-    unit = data.get('unit')
+    zipcode = request.args.get('zipcode')
+    street = request.args.get('street')
+    unit = request.args.get('unit')
 
-    filepaths = []
     for count in range(100):
-        filename = secure_filename(f"{unit}{street}{zipcode}{count}")
-        if path.exists(path.join(pfp_folder, filename)):
-            filepaths.append(path.abspath(path.join(pfp_folder, filename)))
-        else:
-            break
+        filename = secure_filename(f"{unit}{street}{zipcode}{count}.png")
+        photoPath = path.abspath(path.join(prop_pics_folder, filename))
+        if(path.exists(photoPath)):
+            continue
+        
+        filename = secure_filename(f"{unit}{street}{zipcode}{count}.jpg")
+        photoPath = path.abspath(path.join(prop_pics_folder, filename))
+        if(path.exists(photoPath)):
+            continue
+        
+        filename = secure_filename(f"{unit}{street}{zipcode}{count}.jpeg")
+        photoPath = path.abspath(path.join(prop_pics_folder, filename))
+        if(path.exists(photoPath)):
+            continue
+        
+        break
 
-    return jsonify({"success": "True", "path": filepaths})
+    return jsonify({"success": "True", "numPics": count})
 
+@app.route('/prop-photo/<street>/<unit>/<zipcode>/<count>')  # Get prop pic
+def prop_photo(street, unit, zipcode, count):
+
+    filename = secure_filename(f"{unit}{street}{zipcode}{count}.png")
+    photoPath = path.abspath(path.join(prop_pics_folder, filename))
+    if(path.exists(photoPath)):
+        return send_file(photoPath)
+    
+    filename = secure_filename(f"{unit}{street}{zipcode}{count}.jpg")
+    photoPath = path.abspath(path.join(prop_pics_folder, filename))
+    if(path.exists(photoPath)):
+        return send_file(photoPath)
+    
+    filename = secure_filename(f"{unit}{street}{zipcode}{count}.jpeg")
+    photoPath = path.abspath(path.join(prop_pics_folder, filename))
+    if(path.exists(photoPath)):
+        return send_file(photoPath)
+    
+    return jsonify({"error": "no image found"})
 
 @app.route('/upload_lease', methods=['POST'])  # Upload lease document
 def upload_lease():
@@ -553,13 +503,14 @@ def upload_lease():
 
     return jsonify({"success": "False", "error": "File was not uploaded"})
 
+
 @app.route('/download-lease/<street>/<unit>/<zipcode>')  # Get lease document
 def download_lease(street, unit, zipcode):
 
     filename = secure_filename(f"{unit}{street}{zipcode}.pdf")
 
     return send_file(path.abspath(path.join(lease_folder, filename)), as_attachment=True)
-    return jsonify({"success": "True", "path": path.abspath(path.join(lease_folder, filename))})
+
 
 @app.route('/get-name', methods=['GET'])  # user's name from their email
 def get_name():
