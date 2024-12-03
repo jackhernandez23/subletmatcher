@@ -1,6 +1,6 @@
 from errno import EOWNERDEAD
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from werkzeug.utils import secure_filename
 from flask_cors import CORS  # Cross origin requests, assuming React front and Flask back
 from os import path, makedirs
@@ -547,22 +547,18 @@ def upload_lease():
         return jsonify({"success": "False", "error": "No file uploaded"})
 
     if file and allowed_file(file.filename):
-        filename = secure_filename(f"{unit}{street}{zipcode}")
+        filename = secure_filename(f"{unit}{street}{zipcode}.pdf")
         file.save(path.join(lease_folder, filename))
         return jsonify({"success": "True"})
 
     return jsonify({"success": "False", "error": "File was not uploaded"})
 
-@app.route('/get-lease', methods=['GET'])  # Get lease document
-def get_lease():
-    data = request.json
+@app.route('/download-lease/<street>/<unit>/<zipcode>')  # Get lease document
+def download_lease(street, unit, zipcode):
 
-    zipcode = data.get('zipcode')
-    street = data.get('street')
-    unit = data.get('unit')
+    filename = secure_filename(f"{unit}{street}{zipcode}.pdf")
 
-    filename = secure_filename(f"{unit}{street}{zipcode}")
-
+    return send_file(path.abspath(path.join(lease_folder, filename)), as_attachment=True)
     return jsonify({"success": "True", "path": path.abspath(path.join(lease_folder, filename))})
 
 @app.route('/get-name', methods=['GET'])  # user's name from their email
