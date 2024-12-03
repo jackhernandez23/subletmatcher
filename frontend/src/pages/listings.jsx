@@ -108,8 +108,8 @@ const Listings = () => {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center py-8">
             {currentListing != null &&
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setCurrentListing(null)}>
-                    <div className="bg-teal-300 p-8 rounded-lg shadow-lg w-3/4 max-w-lg fixed flex flex-col justify-end" onClick={(e) => e.stopPropagation()}>
+                <div className="fixed inset-0 opacity-100 flex w-full h-full items-center justify-center z-50" onClick={() => setCurrentListing(null)}>
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-lg fixed flex flex-col justify-end" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-2xl font-semibold mb-2">{currentListing.street} Unit {currentListing.unit}</h2>
                         <p className="text-lg pb-1">Zipcode: {currentListing.zipcode}</p>
                         <p className="text-lg pb-1">Owner: {currentListing.owner}</p>
@@ -121,7 +121,7 @@ const Listings = () => {
                         <br></br>
                         <p className="text-lg pb-1">{currentListing.description}</p>
                         <div className="flex items-center justify-center mt-10">
-                            <button className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-blue-400 transition" onClick={() => bookmark(currentListing)}>Bookmark</button>
+                            <button className="bg-blue-500 text-white p-2 rounded" onClick={() => bookmark(currentListing)}>Bookmark</button>
                         </div>
                     </div>
                 </div>
@@ -156,7 +156,7 @@ const Listings = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="border p-4 rounded shadow bg-gradient-to-b from-teal-200 to-blue-200 h-90">
+                    <div className="border p-4 rounded shadow bg-gradient-to-b from-teal-200 to-blue-200 h-96">
                         <div className="flex flex-col justify-center items-center pb-3">
                             <h1 className="text-xl font-bold">
                                 Filters</h1>
