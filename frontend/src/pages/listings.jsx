@@ -14,6 +14,7 @@ const Listings = () => {
         startDate: "",
         endDate: "",
     })
+    const [leasePath, setLeasePath] = useState('')
 
     const [currentListing, setCurrentListing] = useState(null);
 
@@ -27,7 +28,6 @@ const Listings = () => {
                 });
                 console.log('Data received:', JSON.stringify(response));
                 setListings(response)
-                console.log("listings", listings )
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -57,6 +57,18 @@ const Listings = () => {
             console.error('Error fetching data:', error);
             alert("There was an error bookmarking this listing")
         }
+    }
+
+    const downloadLease = (listing) => {
+        const url = `http://127.0.0.1:5000/download-lease/${encodeURIComponent(listing.street)}/${encodeURIComponent(listing.unit)}/${encodeURIComponent(listing.zipcode)}`
+        const link = document.createElement("a");
+        console.log(url)
+        link.href = url;
+        link.setAttribute("download", "lease.pdf"); // Set a default file name
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setLeasePath('')
     }
 
     // proper date formatting
@@ -120,10 +132,15 @@ const Listings = () => {
                         <p className="text-lg pb-1">End Date: {formatDate(currentListing.endDate)}</p>
                         <br></br>
                         <p className="text-lg pb-1">{currentListing.description}</p>
-                        {loggedIn &&
-                        <div className="flex items-center justify-center mt-10">
-                            <button className="bg-blue-500 text-white p-2 rounded" onClick={() => bookmark(currentListing)}>Bookmark</button>
-                        </div>}
+                        <div className="flex justify-center">
+                            <div className="flex items-center justify-center m-10">
+                                <button className="bg-blue-500 text-white p-2 rounded" onClick={() => downloadLease(currentListing)}>Download Lease</button>
+                            </div>
+                            {loggedIn &&
+                            <div className="flex items-center justify-center m-10">
+                                <button className="bg-blue-500 text-white p-2 rounded" onClick={() => bookmark(currentListing)}>Bookmark</button>
+                            </div>}
+                        </div>
                     </div>
                 </div>
             }
