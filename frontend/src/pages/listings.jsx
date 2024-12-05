@@ -197,7 +197,7 @@ const Listings = () => {
                     </h1>
                 </div>
                 <div className="grid grid-cols-[80%_20%] gap-4">
-                    <div className="grid grid-cols-3 gap-4 h-1/2">
+                    <div className="min-w-[900px] max-w-[900px] grid grid-cols-3 gap-4 h-1/2">
                         {listings //apply filters for shown listings
                         .filter(listing => listing.available
                             && listing.price <= filters.price
@@ -219,10 +219,11 @@ const Listings = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="border p-4 rounded shadow bg-gradient-to-b from-teal-200 to-blue-200 h-96">
+                    <div className="min-w-[300px] max-w-[300px] border p-4 rounded shadow bg-gradient-to-b from-teal-200 to-blue-200 h-96 w-full">
                         <div className="flex flex-col justify-center items-center pb-3">
                             <h1 className="text-xl font-bold">
-                                Filters</h1>
+                                Filters
+                            </h1>
                         </div>
                         <div className="flex flex-col px-3 pb-3 items-center">
                             <h1 className="font-bold">Price</h1>
