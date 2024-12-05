@@ -7,7 +7,7 @@ const Navbar = () => {
 
     const logout = () => {
         Cookies.remove('email');
-        location.reload();
+        window.location.href = '/';
     }
 
     return (
