@@ -22,7 +22,6 @@ if not path.exists(lease_folder):
 if not path.exists(prop_pics_folder):
     makedirs(prop_pics_folder)
 
-
 CORS(app)
 
 
