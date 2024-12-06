@@ -36,25 +36,24 @@ def getConn():
     config_parse = configparser.ConfigParser()
     config_parse.read(config_file)
 
-    if config_parse.has_section('DEFAULT'):
-        config = {'user': config_parse['DEFAULT']['username'],
-                  'password': config_parse['DEFAULT']['password'],
-                  'host': config_parse['DEFAULT']['servername'],
-                  'database': config_parse['DEFAULT']['dbname']}
+    if config_parse.has_section('creds'):
+        config = {'user': config_parse['creds']['username'],
+                  'password': config_parse['creds']['password'],
+                  'host': config_parse['creds']['servername'],
+                  'database': config_parse['creds']['dbname']}
 
     else:  # To operate mysql locally make sure you have it running.
         config = {'user': 'user1',
                   'password': 'password',  # I suggest having no password on your local account
                   'host': 'localhost',
-                  'database': 'sublet_matcher',
-                  'auth_plugin': 'mysql_native_password'}
+                  'database': 'sublet_matcher'}
 
     return mysql.connector.connect(
         user=config['user'],
         password=config['password'],
         host=config['host'],
         database=config['database'],
-        auth_plugin=config['auth_plugin'])
+        auth_plugin='mysql_native_password')
 
 
 @app.route('/', methods=['GET'])
