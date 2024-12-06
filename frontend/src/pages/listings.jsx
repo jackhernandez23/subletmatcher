@@ -235,7 +235,6 @@ const Listings = () => {
                                 step={100}
                                 onChange={handlePriceChange}
                             />
-
                         </div>
                         <div className="flex flex-col px-3 pb-3 items-center">
                             <h1 className="font-bold">Roommates</h1>

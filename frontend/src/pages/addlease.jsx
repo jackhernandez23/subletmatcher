@@ -50,6 +50,7 @@ const Upload = () => {
         })
     }
 
+
     const handleLeaseUpload = (e) => {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
@@ -75,7 +76,8 @@ const Upload = () => {
         for (const selectedFile of files) {
             if (selectedFile) {
                 // Check if the file is a png jpg or jpeg
-                if (selectedFile.type !== "image/jpg" && selectedFile.type !== "image/png" && selectedFile.type !== "application/jpeg") {
+                console.log(selectedFile.type)
+                if (selectedFile.type !== "image/jpg" && selectedFile.type !== "image/png" && selectedFile.type !== "image/jpeg") {
                     alert("Please upload an image in png, jpeg, or jpg format.");
                 } else {
                     setInput({
@@ -94,35 +96,41 @@ const Upload = () => {
         console.log("validating input...")
 
         // check that all inputs are valid
+        console.log("checking all inputs have been filled...")
+        for (const [key, value] of Object.entries(input)) {
+            console.log(`pass ${key}`);
+            if (value === "" || value === null || (Array.isArray(value) && value.length === 0)) {
+                alert("Please complete all fields");
+                return;
+        }
+}
 
         // validate dates
+        console.log("checking if dates are valid...")
         if((input.startDate >= input.endDate) || (new Date(input.endDate) < new Date())) {
             alert("Please enter valid dates")
             return
         }
         
         // validate price
+        console.log("checking if price is valid...")
         if(input.price <= 0) {
             alert("Please enter a valid rent price");
             return
         }
 
         // validate num roommates
+        console.log("checking if number of roommates is valid...")
         if(input.numOfRoommates < 0 || input.numOfRoommates > 15) {
             alert("Please enter a valid number of roommates (0 to 15)");
             return
         }
 
-        // validate if lease has been added
-        if(input.lease == null) {
-            alert("Please upload a lease in PDF format");
-            return
-        }
-
-        // validate if photos have been added
-        if(input.photos.length < 1) {
-            alert("Please upload at least one property photo");
-            return
+        // validate zip code
+        console.log("checking if zip code is valid...")
+        if (input.zipcode.length !== 5 || isNaN(Number(input.zipcode))) {
+            alert("Please enter a valid zip code");
+            return;
         }
 
         console.log("input data validated, attempting form submission...")
@@ -144,7 +152,7 @@ const Upload = () => {
             formData.append('description', input.description);
             formData.append('lease', input.lease);
         
-            for (photo of photos)
+            for (const photo of input.photos)
                 formData.append(`photos`, photo);
 
             const response = await fetch('http://127.0.0.1:5000/addlease', {

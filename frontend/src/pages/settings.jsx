@@ -5,12 +5,9 @@ import $ from 'jQuery';
 const Settings = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [profilePicture, setProfilePicture] = useState('');
 
     const isPasswordValid = (password) => {
-        if (password.length < 8)            // password must be at least 8 characters
-            return false;
-
+        
         let hasUppercase = false;
         let hasLowercase = false;
         let hasNumber = false;
@@ -50,9 +47,9 @@ const Settings = () => {
                 await $.ajax({
                     url: 'http://127.0.0.1:5000/change-password',
                     type: 'POST',
-                    /*headers: {
+                    headers: {
                         'Content-Type': 'application/json'
-                    },*/
+                    },  
                     data: JSON.stringify(sendData),
                     success: function(response) {
                         console.log('Data received:', JSON.stringify(response));
@@ -73,19 +70,6 @@ const Settings = () => {
             }
     };
 
-    const handleSubmit = async () => {
-        if (!profilePicture) {
-            alert("Please select a file.");
-            return;
-        }
-        try {
-            alert("Profile picture updated successfully!");
-        }
-        catch (error) {
-            console.error('Network error:', error);
-            alert("An error occurred while updating profile picture")
-        }
-    }
 
     return (
         <div className="flex flex-col justify-center items-center px-10 py-5 pb-16 h-full">
@@ -95,7 +79,7 @@ const Settings = () => {
                 </h1>
             </div>
 
-            <div className="grid grid-cols-2 grid-rows-2 justify-center items-center w-full">
+            <div className="flex flex-col justify-center items-center w-full gap-20">
                 <div className="flex flex-col justify-center items-center">
                     <h1 className="font-bold text-lg">Reset Password</h1>
                     <div className="justify-center grid grid-cols-2 grid-rows-2 space-y-6 items-center">
@@ -122,19 +106,6 @@ const Settings = () => {
                         Change Password
                     </button>
                 </div>
-
-                <div className="inlet-0 flex flex-col justify-center items-center space-y-10">
-                        <label className="font-bold text-lg" htmlFor="profilePicture">Change Profile picture </label>
-                        <input
-                            type="file"
-                            onChange={(ev) => setProfilePicture(ev.target.value)}
-                            className={"p-2 w-full pl-64"}
-                        />
-                        <button onClick={handleSubmit} className="bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition">
-                            Change Profile Picture
-                        </button>
-                </div>
-
                 <div className="flex col-span-2 justify-center items-center w-full">
                     <button onClick={() => {window.location.href = '/mylistings'}} className="bg-teal-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-teal-400 transition">
                                 View My Listings
