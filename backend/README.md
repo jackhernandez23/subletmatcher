@@ -3,6 +3,7 @@
 - flask (Pip)
 - flask_cors (Pip)
 - mysql.connector (Pip)
+- pyotp (Pip)
 
 # How to run
 Update the config variable in app.py and fake_data.py with you local MySQL credentials

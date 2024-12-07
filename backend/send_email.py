@@ -1,6 +1,5 @@
-import smtplib
 from email.mime.text import MIMEText
-from smtplib import SMTP_SSL
+from smtplib import SMTP_SSL, SMTPAuthenticationError
 from pyotp import HOTP
 
 
@@ -28,7 +27,7 @@ def send_email(recipient):
             smtp_server.login(sender, passphrase)
             smtp_server.sendmail(sender, recipient, msg.as_string())
             return True
-    except smtplib.SMTPAuthenticationError:
+    except SMTPAuthenticationError:
         print("Check password")
 
     return False
